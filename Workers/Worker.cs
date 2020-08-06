@@ -18,7 +18,7 @@ namespace Workers
         /// <param name="Department">Отдел</param>
         /// <param name="Salary">Оплата труда</param>
         /// <param name="Charge">Количество проектов</param>
-        public Worker(int Tabnum, string FirstName, string LastName, string Position, uint Salary, string Department, int Charge)
+        public Worker(int Tabnum, string FirstName, string LastName, string Position, uint Salary, Department Department, int Charge)
         {
             this.firstName = FirstName;
             this.lastName = LastName;
@@ -61,7 +61,7 @@ namespace Workers
         /// <summary>
         /// Отдел
         /// </summary>
-        public string Department { get { return this.department; } set { this.department = value; } }
+        public Department Department { get { return this.department; } set { this.department = value; } }
 
         /// <summary>
         /// Оплата труда
@@ -100,7 +100,7 @@ namespace Workers
         /// <summary>
         /// Поле "Отдел"
         /// </summary>
-        private string department;
+        private Department department;
 
         /// <summary>
         /// Поле "Оплата труда"
@@ -119,5 +119,6 @@ namespace Workers
 
         #endregion
 
-    }
+       
+}
 }

@@ -29,6 +29,12 @@ namespace Workers
         /// </summary>
         public int PrCount { get; set; }
 
+        /// <summary>
+        /// Список должностей
+        /// </summary>
+        public string[] Positions { get; set; }
+
+
         #endregion
 
         #region Конструкторы
@@ -39,6 +45,7 @@ namespace Workers
             this.CrDate = CrDate;
             this.ECount = ECount;
             this.PrCount = PrCount;
+            this.Positions = new string[] { "Начальник", "Зам.начальника", "Помощник", "Ведущий инженер", "Инженер", "Стажер" };
 
         }
         #endregion
