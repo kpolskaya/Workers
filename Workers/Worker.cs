@@ -11,18 +11,23 @@ namespace Workers
         /// <summary>
         /// Создание сотрудника
         /// </summary>
+        /// <param name="Tabnum">Табельный номер</param>
         /// <param name="FirstName">Имя</param>
         /// <param name="LastName">Фамилия</param>
         /// <param name="Position">Должность</param>
         /// <param name="Department">Отдел</param>
         /// <param name="Salary">Оплата труда</param>
-        public Worker(string FirstName, string LastName, string Position, uint Salary, string Department)
+        /// <param name="Charge">Количество проектов</param>
+        public Worker(int Tabnum, string FirstName, string LastName, string Position, uint Salary, string Department, int Charge)
         {
             this.firstName = FirstName;
             this.lastName = LastName;
             this.position = Position;
             this.department = Department;
             this.salary = Salary;
+            this.tabnum = Tabnum;
+            this.charge = Charge;
+
         }
 
         #endregion
@@ -64,17 +69,14 @@ namespace Workers
         public uint Salary { get { return this.salary; } set { this.salary = value; } }
 
         /// <summary>
-        /// Почасовая оплата
+        /// Табельный номер
         /// </summary>
-        public double HourRate
-        {
-            get
-            {
-                byte workingDays = 25; // Рабочих дней в месяце
-                byte workingHours = 8; // Рабочих часов в день
-                return ((double)Salary) / workingDays / workingHours;
-            }
-        }
+        public int Tabnum { get { return this.tabnum; } set { this.tabnum = value; } }
+
+        /// <summary>
+        /// Количество проектов
+        /// </summary>
+       public int Charge { get { return this.charge; } set { this.charge = value; } }
 
         #endregion
 
@@ -104,6 +106,18 @@ namespace Workers
         /// Поле "Оплата труда"
         /// </summary>
         private uint salary;
+
+        /// <summary>
+        /// Поле "Табельный номер"
+        /// </summary>
+        private int tabnum;
+
+        /// <summary>
+        /// Поле "Количество проектов"
+        /// </summary>
+        private int charge;
+
+        #endregion
 
     }
 }
