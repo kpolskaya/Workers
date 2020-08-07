@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Workers
 {
@@ -78,6 +79,11 @@ namespace Workers
         ///  2   Имя_2     Фамилия_2          21         Отдел_2            20000                      3 
         ///  5   Имя_5     Фамилия_5          22         Отдел_2            20000                      3 
         /// 
+
+        /// <summary>
+        /// Организация хранения и генерации данных
+        /// </summary>
+       
 
         static void Main(string[] args)
         {

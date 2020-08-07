@@ -4,40 +4,43 @@ using System.Text;
 
 namespace Workers
 {
-    struct Worker
+    public class Repository
     {
-        #region Конструкторы
+        /// <summary>
+        /// База данных женских имён
+        /// </summary>
+        static readonly string[] firstNamesF;
 
         /// <summary>
-        /// Создание сотрудника
+        /// База данных мужских имён
         /// </summary>
-        /// <param name="Tabnum">Табельный номер</param>
-        /// <param name="FirstName">Имя</param>
-        /// <param name="LastName">Фамилия</param>
-        /// <param name="Age">Возраст</param>
-        /// <param name="Position">Должность</param>
-        /// <param name="Department">Отдел</param>
-        /// <param name="Salary">Оплата труда</param>
-        /// <param name="Charge">Количество проектов</param>
-        public Worker(int Tabnum, string FirstName, string LastName, int Age, string Position, uint Salary, Department Department, int Charge)
-        {
-            this.firstName = FirstName;
-            this.lastName = LastName;
-            this.position = Position;
-            this.department = Department;
-            this.salary = Salary;
-            this.tabnum = Tabnum;
-            this.charge = Charge;
-            this.age = Age;
-        }
+        static readonly string[] firstNamesM;
 
-        public Worker(int TubNum, Department Department)
+        /// <summary>
+        /// База данных имён
+        /// </summary>
+        static readonly string[] firstNames;
+
+        /// <summary>
+        /// База данных фамилий
+        /// </summary>
+        static readonly string[] lastNames;
+
+        /// <summary>
+        /// Генератор псевдослучайных чисел
+        /// </summary>
+        static Random randomize;
+
+        /// <summary>
+        /// Статический конструктор, в котором создются
+        /// данные о именах и фамилиях баз данных firstNames и lastNames
+        /// </summary>
+        static Repository()
         {
-            this.tabnum = TubNum;
-            Random rand = new Random();
-           
+            randomize = new Random(); // Размещение в памяти генератора случайных чисел
+
             // Размещение женских имен в базе данных firstNames
-            string[] firstNamesF = new string[] {
+            firstNamesF = new string[] {
                 "Агата",
                 "Агния",
                 "Аделина",
@@ -141,7 +144,7 @@ namespace Workers
 
                 };
             // Размещение мужских имен в базе данных firstNames
-            string[] firstNamesM = new string[] {
+            firstNamesM = new string[] {
                 "Алан",
                 "Александр",
                 "Алексей",
@@ -245,7 +248,7 @@ namespace Workers
 
                 };
             // Размещение фамилий в базе данных lastNames
-            string[] lastNames = new string[]
+            lastNames = new string[]
             {
                 "Смирнов",
                 "Иванов",
@@ -499,152 +502,111 @@ namespace Workers
                 "Туров"
 
             };
-
-            int sex = rand.Next(0, 2);
-            if (sex==0)
-            {
-                this.firstName = firstNamesM[rand.Next(0, 101)];
-                this.lastName = lastNames[rand.Next(0, 251)];
-            }
-            else
-            {
-                this.firstName = firstNamesF[rand.Next(0, 101)];
-                this.lastName = lastNames[rand.Next(0, 251)]+'а';
-            }
-
-            this.salary = 0;
-            this.position = Department.Positions[0];
-            this.department = Department;
-           
-            this.charge = rand.Next(1, 10);
-            this.age = rand.Next(20, 67);
-
-            int numPos = PosCount(5);
-            this.position = Department.Positions[numPos];
-            this.salary = (uint)(100000 / (numPos + 1));
         }
 
-       
-        #endregion
+        /// <summary>
+        /// База данных работников, в которой хранятся 
+        /// Таб. номер, имя, фамилия, возраст, должность, зарплата, отдел и загрузка каждого сотрудника
+        /// </summary>
+        public List<Worker> Workers { get; set; }
 
-        #region Методы
-
-        public string Print()
+        /// <summary>
+        /// Конструктор, заполняющий базу данных Workers
+        /// </summary>
+        /// <param name="Count">Количество сотрудников, которых нужно создать</param>
+        public Repository(int Count, Department department)
         {
-            return $"{this.firstName,15} {this.lastName,15} {this.department,15} {this.position,15} {this.salary,10}";
-        }
+            this.Workers = new List<Worker>(); // Выделение памяти для хранения базы данных Workers
 
-        /// <summary>
-        /// минимизирует вероятность использования значения 0
-        /// </summary>
-        /// <param name="max"></param>
-        /// <returns></returns>
-        private int PosCount(int max)
-        {
-            Random r = new Random();
-            int t = r.Next(0, max + 1);
-            if (t == 0)
+            for (int i = 0; i < Count / 2; i++)    // Заполнение базы данных Workers женщинами. Выполняется Count/2 раз
             {
-                t += r.Next(0, max + 1);
+                // Добавляем новую работницу в базы данных Workers
+                this.Workers.Add(
+                    new Worker(
+                        //int Tabnum, string FirstName, string LastName, int Age, string Position, uint Salary, Department Department, int Charge
+                        //присваиваем табельный номер
+                        i,
+                        // выбираем случайное женское имя из базы данных имён
+                        firstNames[Repository.randomize.Next(Repository.firstNamesF.Length)],
+
+                        // выбираем случайную фамилию из базы данных фамилий
+                        lastNames[Repository.randomize.Next(Repository.($"{lastNames}'а'").Length)],//?????????
+
+                        // Генерируем случайный возраст в диапазоне 19 лет - 60 лет
+                        randomize.Next(19, 60),
+
+                        //выбираем случайную должность
+                        Department.Position[Repository.randomize.Next()],
+
+                        // Генерируем случайную зарплату в диапазоне 10000руб - 80000руб
+                        randomize.Next(10000, 80000),
+
+                        Department Department,
+
+                        // Генерируем случайное количество проектов в диапазоне 1 - 10 
+                        randomize.Next(1, 10)
+                        ));
             }
-            return t;
+
+
+            for (int i = Count / 2; i < Count; i++)    // Заполнение базы данных Workers мужчинами. Выполняется Count/2 раз
+            {
+                // Добавляем нового работника в базы данных Workers
+                this.Workers.Add(
+                    new Worker(
+                        //int Tabnum, string FirstName, string LastName, int Age, string Position, uint Salary, Department Department, int Charge
+                        //присваиваем табельный номер
+                        i,
+                        // выбираем случайное женское имя из базы данных имён
+                        firstNames[Repository.randomize.Next(Repository.firstNamesM.Length)],
+
+                        // выбираем случайную фамилию из базы данных фамилий
+                        lastNames[Repository.randomize.Next(Repository.lastNames.Length)],
+
+                        // Генерируем случайный возраст в диапазоне 19 лет - 60 лет
+                        randomize.Next(19, 60),
+
+                        //выбираем случайную должность
+                        Department.Position[Repository.randomize.Next()],
+
+                        // Генерируем случайную зарплату в диапазоне 10000руб - 80000руб
+                        randomize.Next(10000, 80000),
+
+                        Department Department,
+
+                        // Генерируем случайное количество проектов в диапазоне 1 - 10 
+                        randomize.Next(1, 10)
+                        ));
+            }
         }
-        #endregion
-
-        #region Свойства
 
         /// <summary>
-        /// Имя
+        /// Метод вывода базы данных Workers в консоль
         /// </summary>
-        public string FirstName { get { return this.firstName; } set { this.firstName = value; } }
+        /// <param name="Text">Вспомогательный текст, который будет напечатан перед выводом базы</param>
+        public void Print(string Text)
+        {
+            Console.WriteLine(Text);    // Печать в консоль вспомогательного текста
 
-        /// <summary>
-        /// Фамилия
-        /// </summary>
-        public string LastName { get { return this.lastName; } set { this.lastName = value; } }
+            // Изменяем цвет шрифта для печати в консоли на DarkBlue
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
 
-        /// <summary>
-        /// Должность
-        /// </summary>
-        public string Position { get { return this.position; } set { this.position = value; } }
+            // Выводим Заголовки колонок базы данных Таб. номер, имя, фамилия, возраст, должность, зарплата, отдел и загрузка
+            Console.WriteLine($"{"Табельный номер",6}{"Имя",15} {"Фамилия",15} {"Возраст",3} {"Должность",10} {"Зарплата",15} {"Отделт",10} {"Количество проектов",3}");
 
-        /// <summary>
-        /// Отдел
-        /// </summary>
-        public Department Department { get { return this.department; } set { this.department = value; } }
-
-        /// <summary>
-        /// Оплата труда
-        /// </summary>
-        public uint Salary { get { return this.salary; } set { this.salary = value; } }
-
-        /// <summary>
-        /// Табельный номер
-        /// </summary>
-        public int Tabnum { get { return this.tabnum; } }
-
-        /// <summary>
-        /// Количество проектов
-        /// </summary>
-       public int Charge { get { return this.charge; } set { this.charge = value; } }
-
-        /// <summary>
-        /// Возраст
-        /// </summary>
-        public int Age { get { return this.age; } set { this.age = value; } }
-
-        #endregion
-
-        #region Поля
-
-        /// <summary>
-        /// Поле "Имя"
-        /// </summary>
-        private string firstName;
-
-        /// <summary>
-        /// Поле "Фамилия"
-        /// </summary>
-        private string lastName;
-
-        /// <summary>
-        /// Поле "Возраст"
-        /// </summary>
-        private int age;
-
-        /// <summary>
-        /// Поле "Должность"
-        /// </summary>
-        private string position;
-
-        /// <summary>
-        /// Поле "Отдел"
-        /// </summary>
-        private Department department;
-
-        /// <summary>
-        /// Поле "Оплата труда"
-        /// </summary>
-        private uint salary;
-
-        /// <summary>
-        /// Поле "Табельный номер"
-        /// </summary>
-        private int tabnum;
-
-        /// <summary>
-        /// Поле "Количество проектов"
-        /// </summary>
-        private int charge;
-
-        #endregion
-
-        #region Частные методы
-        
+            // Изменяем цвет шрифта для печати в консоли на Gray
+            Console.ForegroundColor = ConsoleColor.Gray;
 
 
+            foreach (var worker in this.Workers) //
+            {                                    // Печатаем в консоль всех работников
+                Console.WriteLine(worker);       //
+            }                                    //
 
-        #endregion
+            Console.WriteLine($"Итого: {this.Workers.Count}\n");    // Сводный отчёт. Сколько работников распечатано
+        }
+
+
 
     }
 }

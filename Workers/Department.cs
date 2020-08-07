@@ -48,6 +48,20 @@ namespace Workers
             this.Positions = new string[] { "Начальник", "Зам.начальника", "Помощник", "Ведущий инженер", "Инженер", "Стажер" };
 
         }
+
+        public Department(int num, int q)       //q - количество сотрудников в отделе, для начала 10
+        {
+            Random rand;
+            DateTime d = Convert.ToDateTime("01.01.1990");
+            this.Name = $"Отдел_ + {num}";
+            rand = new Random();
+            this.CrDate = d.AddDays (rand.Next(0, 500));
+            this.ECount = rand.Next(q/10, q+1);
+            this.PrCount = ECount/3;
+            this.Positions = new string[] { "Начальник", "Зам.начальника", "Помощник", "Ведущий инженер", "Инженер", "Стажер" };
+
+        }
+
         #endregion
 
     }
