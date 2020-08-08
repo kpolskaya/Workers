@@ -81,13 +81,43 @@ namespace Workers
         /// 
 
         /// <summary>
+        /// База данных работников, в которой хранятся 
+        /// Имя, фамилия, возраст и зарплаты каждого сотрудника
+        /// </summary>
+        public List<Worker> Workers { get; set; }
+
+        
+        /// <summary>
         /// Организация хранения и генерации данных
         /// </summary>
-       
+
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Random rand = new Random();
+
+            List<Department> organization = new List<Department>();
+            for (int i = 1; i <= 6; i++)
+            {
+                organization.Add(new Department(i, 10));
+            }
+
+ 
+            List<Worker> workers = new List<Worker>();
+          
+            for (int i = 1; i <= 21; i++)
+            {
+                workers.Add(new Worker(i, organization[rand.Next(0,6)]));
+            }
+
+            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+
+            foreach (var item in workers)
+            {
+                Console.WriteLine(item.PrintWorker());
+            }
+            Console.ReadKey();
         }
+        
     }
 }

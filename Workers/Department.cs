@@ -53,7 +53,7 @@ namespace Workers
         {
             Random rand;
             DateTime d = Convert.ToDateTime("01.01.1990");
-            this.Name = $"Отдел_ + {num}";
+            this.Name = $"Отдел {num}";
             rand = new Random();
             this.CrDate = d.AddDays (rand.Next(0, 500));
             this.ECount = rand.Next(q/10, q+1);

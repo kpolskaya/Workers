@@ -524,15 +524,16 @@ namespace Workers
             this.salary = (uint)(100000 / (numPos + 1));
         }
 
-       
+
         #endregion
 
         #region Методы
-
-        public string Print()
+        public string PrintWorker()
         {
-            return $"{this.firstName,15} {this.lastName,15} {this.department,15} {this.position,15} {this.salary,10}";
+            return $"{this.tabnum,10}{this.firstName,12} {this.lastName,15} {this.age,10}" +
+                $"  {this.position,15}  {this.salary,10} {this.department.Name,10} {this.charge,10}";
         }
+
 
         /// <summary>
         /// минимизирует вероятность использования значения 0
