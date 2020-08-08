@@ -7,6 +7,7 @@ namespace Workers
     struct Department
     {
 
+       
         #region Свойства
         /// <summary>
         /// Название отдела
@@ -49,19 +50,23 @@ namespace Workers
 
         }
 
-        public Department(int num, int q)       //q - количество сотрудников в отделе, для начала 10
+        public Department(int num/*, int q*/)       //q - максимальное количество сотрудников в отделе, для начала 100000
         {
             Random rand;
             DateTime d = Convert.ToDateTime("01.01.1990");
-            this.Name = $"Отдел {num}";
+            this.Name = $"Отдел  {num}";
             rand = new Random();
             this.CrDate = d.AddDays (rand.Next(0, 500));
-            this.ECount = rand.Next(q/10, q+1);
+            this.ECount = 0;
             this.PrCount = ECount/3;
             this.Positions = new string[] { "Начальник", "Зам.начальника", "Помощник", "Ведущий инженер", "Инженер", "Стажер" };
 
         }
 
+        public string PrintDepartment()
+        {
+            return $"{this.Name,15}{this.CrDate,25} {this.ECount,15} {this.PrCount,10}";
+        }
         #endregion
 
     }

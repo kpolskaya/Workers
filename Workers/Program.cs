@@ -85,7 +85,7 @@ namespace Workers
         /// База данных работников, в которой хранятся 
         /// Имя, фамилия, возраст и зарплаты каждого сотрудника
         /// </summary>
-        public List<Worker> Workers { get; set; }
+        //public List<Worker> Workers { get; set; }
 
         
         /// <summary>
@@ -98,17 +98,21 @@ namespace Workers
             Random rand = new Random();
 
             List<Department> organization = new List<Department>();
-            for (int i = 1; i <= 6; i++)
+           
+            for (int i = 0; i <= 3; i++)
             {
-                organization.Add(new Department(i, 10));
+                organization.Add(new Department(i));
+               
+                
             }
+           
 
- 
             List<Worker> workers = new List<Worker>();
           
-            for (int i = 1; i <= 21; i++)
+            for (int i = 0; i <= 21; i++)
             {
-                workers.Add(new Worker(i, organization[rand.Next(0,6)]));
+                workers.Add(new Worker(i, organization[rand.Next(0,3)]));
+
             }
 
             Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
@@ -116,6 +120,14 @@ namespace Workers
             foreach (var item in workers)
             {
                 Console.WriteLine(item.PrintWorker());
+            }
+            Console.ReadKey();
+
+            Console.WriteLine($"{"Отдел",15}{"Дата создания",25} {"Сотрудников",15} {"Тем",10}");
+
+            foreach (var item in organization)
+            {
+                Console.WriteLine(item.PrintDepartment());
             }
             Console.ReadKey();
 
@@ -127,6 +139,12 @@ namespace Workers
             foreach (Worker w in sortedWokers)
             {
                 Console.WriteLine(w.PrintWorker());
+            }
+            Console.ReadKey();
+
+            foreach (var item in organization)
+            {
+                Console.WriteLine(item.Name, item.ECount);
             }
             Console.ReadKey();
         }

@@ -503,13 +503,13 @@ namespace Workers
             int sex = rand.Next(0, 2);
             if (sex==0)
             {
-                this.firstName = firstNamesM[rand.Next(0, 101)];
-                this.lastName = lastNames[rand.Next(0, 251)];
+                this.firstName = firstNamesM[rand.Next(0, 100)];
+                this.lastName = lastNames[rand.Next(0, 250)];
             }
             else
             {
-                this.firstName = firstNamesF[rand.Next(0, 101)];
-                this.lastName = lastNames[rand.Next(0, 251)]+'а';
+                this.firstName = firstNamesF[rand.Next(0, 100)];
+                this.lastName = lastNames[rand.Next(0, 250)]+'а';
             }
 
             this.salary = 0;
@@ -522,6 +522,7 @@ namespace Workers
             int numPos = PosCount(5);
             this.position = Department.Positions[numPos];
             this.salary = (uint)(100000 / (numPos + 1));
+           
         }
 
 
@@ -530,8 +531,7 @@ namespace Workers
         #region Методы
         public string PrintWorker()
         {
-            return $"{this.tabnum,10}{this.firstName,12} {this.lastName,15} {this.age,10}" +
-                $"  {this.position,15}  {this.salary,10} {this.department.Name,10} {this.charge,10}";
+            return $"{this.tabnum,10}{this.firstName,12} {this.lastName,15} {this.age,10}  {this.position,15}  {this.salary,10} {this.department.Name,10} {this.charge,10}";
         }
 
 
