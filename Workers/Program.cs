@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Workers
 {
@@ -117,7 +118,20 @@ namespace Workers
                 Console.WriteLine(item.PrintWorker());
             }
             Console.ReadKey();
+
+            var sortedWokers = from worker in workers
+                               orderby worker.Age, worker.Charge select worker;
+
+            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+
+            foreach (Worker w in sortedWokers)
+            {
+                Console.WriteLine(w.PrintWorker());
+            }
+            Console.ReadKey();
         }
         
+        
     }
+
 }
