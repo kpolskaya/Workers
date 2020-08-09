@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Workers
 {
-    struct Department
+    class Department
     {
 
        
@@ -65,7 +65,7 @@ namespace Workers
 
         public string PrintDepartment()
         {
-            return $"{this.Name,15}{this.CrDate,25} {this.ECount,15} {this.PrCount,10}";
+            return $"{this.Name,15}{this.CrDate.ToString("dd.MM.yyyy"),25} {this.ECount,15} {this.PrCount,10}";
         }
         #endregion
 

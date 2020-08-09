@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Workers
 {
@@ -82,12 +85,53 @@ namespace Workers
         /// 
 
         /// <summary>
-        /// База данных работников, в которой хранятся 
-        /// Имя, фамилия, возраст и зарплаты каждого сотрудника
+        /// Ввод с консоли целого числа с проверкой диапазона значений. Возвращает целое число.
         /// </summary>
-        //public List<Worker> Workers { get; set; }
+        /// <param name="message"> Приглашение к вводу </param>
+        /// <param name="min">Минимальное допустимое значение </param>
+        /// <param name="max">Максимальное допустимое значение </param>
+        /// <returns></returns>
+        static int GetNum(string message, int min, int max)
+        {
+            int num;
+            Console.Write($"{message} (от {min} до {max}): ");
+            do
+            {
+                if (int.TryParse(Console.ReadLine(), out num) && num >= min && num <= max)
+                    break;
+                else
+                    Console.Write("Вы ввели недопустимое значение. Попробуйте еще: ");
 
-        
+            } while (true);
+            return num;
+        }
+
+        /// <summary>
+        /// Выводит сообщение на консоль и ждет ввода. Если нажата клавиша "q" - возвращает false,
+        /// в другом случае - true.
+        /// </summary>
+        /// <returns></returns>
+        static bool Repeat()
+        {
+            Console.Write($"Для выхода нажмите q, для продолжения редактирования - любую другую клавишу: ");
+            return !(Console.ReadKey(true).Key == ConsoleKey.Q);
+        }
+
+        /// <summary>
+        /// Ввод с консоли целого числа с проверкой диапазона значений. Возвращает целое число.
+        /// </summary>
+        /// <param name="message"> Приглашение к вводу </param>
+        /// <param name="min">Минимальное допустимое значение </param>
+        /// <param name="max">Максимальное допустимое значение </param>
+        /// <returns></returns>
+        static string GetText(string message)
+        {
+            string text;
+            Console.Write($"{message}: ");
+            text = Console.ReadLine();
+            return text;
+        }
+
         /// <summary>
         /// Организация хранения и генерации данных
         /// </summary>
@@ -96,25 +140,23 @@ namespace Workers
         static void Main(string[] args)
         {
             Random rand = new Random();
-
+           
             List<Department> organization = new List<Department>();
            
-            for (int i = 0; i <= 3; i++)
+            for (int i = 1; i <= 6; i++)
             {
                 organization.Add(new Department(i));
-               
-                
+              
             }
-           
-
+       
             List<Worker> workers = new List<Worker>();
-          
-            for (int i = 0; i <= 21; i++)
+
+            for (int i = 1; i <= 21; i++)
             {
-                workers.Add(new Worker(i, organization[rand.Next(0,3)]));
-
+               workers.Add(new Worker(i, organization[rand.Next(0, 6)]));
             }
-
+                
+       
             Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
 
             foreach (var item in workers)
@@ -131,25 +173,116 @@ namespace Workers
             }
             Console.ReadKey();
 
-            var sortedWokers = from worker in workers
-                               orderby worker.Age, worker.Charge select worker;
+            //var sortedWokers = from worker in workers
+            //                   orderby worker.Age, worker.Charge select worker;
 
+            //Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+
+            //foreach (Worker w in sortedWokers)
+            //{
+            //    Console.WriteLine(w.PrintWorker());
+            //}
+            //Console.ReadKey();
+           
+                workers.Add(new Worker(workers.Count+1, organization[rand.Next(0, 6)]));
             Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
 
-            foreach (Worker w in sortedWokers)
+            foreach (var item in workers)
             {
-                Console.WriteLine(w.PrintWorker());
+                Console.WriteLine(item.PrintWorker());
             }
             Console.ReadKey();
 
-            foreach (var item in organization)
+
+            int d = GetNum("Для удаления сотрудника введите его табельный номер", 1, workers.Count);
+            
+            Worker found = workers.Find(item => item.Tabnum == d);
+            
+
+            Console.WriteLine(found.PrintWorker());
+            int idx = workers.IndexOf(found);
+            workers.RemoveAt(idx);
+
+            foreach (var item in workers)
             {
-                Console.WriteLine(item.Name, item.ECount);
+                Console.WriteLine(item.PrintWorker());
             }
             Console.ReadKey();
+
+
+            do
+            {
+                Console.WriteLine("РЕДАКТИРОВАНИЕ ДАННЫХ СОТРУДНИКА\n");
+                Console.WriteLine("для изменения должности и отдела вам необходимо уволить сотрудника и принять его на работу заново \n");
+                int r = GetNum("Введите табельный номер для редактирования данных сотрудника", 1, workers.Count);
+                Worker foundr = workers.Find(item => item.Tabnum == r);
+
+                Console.WriteLine(foundr.PrintWorker());
+
+                Console.WriteLine("\nДля изменения имени нажмите 1");
+                Console.WriteLine("Для изменения фамилии нажмите 2");
+                Console.WriteLine("Для изменения возраста нажмите 3");
+                Console.WriteLine("Для изменения зарплаты нажмите 4");
+                Console.WriteLine($"Для изменения количества проектов нажмите 5\n");
+
+                //var ans = Console.ReadKey(true).KeyChar;
+
+                int ans = GetNum("Выберите нужное действие", 1, 6);
+                Console.WriteLine();
+              
+                switch (ans)
+                {
+                    case 1:
+
+                        foundr.FirstName = GetText("Введите новое имя:");
+                        Console.WriteLine();
+                        Console.WriteLine(foundr.PrintWorker());
+                        break;
+
+                    case 2:
+
+                        foundr.LastName = GetText("Введите новую фамилию:");
+                        Console.WriteLine();
+                        Console.WriteLine(foundr.PrintWorker());
+                        break;
+                        
+                    case 3:
+
+                        foundr.Age = GetNum("Введите новый возраст:",1,120);
+                        Console.WriteLine();
+                        Console.WriteLine(foundr.PrintWorker());
+                        break;
+
+                    case 4:
+
+                        foundr.Salary = (uint)GetNum("Введите новую зарплату:", 1, 100000);
+                        Console.WriteLine();
+                        Console.WriteLine(foundr.PrintWorker());
+                        break;
+
+                    case 5:
+
+                        foundr.Charge = GetNum("Введите новую загрузку:", 0, 100);
+                        Console.WriteLine();
+                        Console.WriteLine(foundr.PrintWorker());
+                        break;
+
+                        default:                                                                                          
+                            Console.WriteLine("Выбрано неизвестное действие\n");
+                            break;
+                }
+
+            }
+            while (Repeat());
+
+            foreach (var item in workers)
+            {
+                Console.WriteLine(item.PrintWorker());
+            }
+            Console.ReadKey();
+          
         }
-        
-        
+
     }
 
 }
