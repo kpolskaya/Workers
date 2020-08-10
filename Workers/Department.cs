@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Workers
 {
-    class Department
+    public class Department
     {
 
        
@@ -39,6 +39,11 @@ namespace Workers
         #endregion
 
         #region Конструкторы
+
+        public Department()
+        {
+
+        }
 
         public Department ( string Name, DateTime CrDate, int ECount, int PrCount)
         {

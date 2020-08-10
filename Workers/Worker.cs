@@ -4,9 +4,13 @@ using System.Text;
 
 namespace Workers
 {
-    class Worker
+    public class Worker
     {
         #region Конструкторы
+
+        public Worker()
+        {
+        }
 
         /// <summary>
         /// Создание сотрудника
@@ -587,7 +591,7 @@ namespace Workers
         /// <summary>
         /// Табельный номер
         /// </summary>
-        public int Tabnum { get { return this.tabnum; } }
+        public int Tabnum { get { return this.tabnum; } set { this.tabnum = value; } }
 
         /// <summary>
         /// Количество проектов
