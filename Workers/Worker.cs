@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,13 +8,15 @@ namespace Workers
     public class Worker
     {
         #region Конструкторы
-
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public Worker()
         {
         }
 
         /// <summary>
-        /// Создание сотрудника
+        /// Создание сотрудника со всеми полями
         /// </summary>
         /// <param name="Tabnum">Табельный номер</param>
         /// <param name="FirstName">Имя</param>
@@ -23,24 +26,29 @@ namespace Workers
         /// <param name="Department">Отдел</param>
         /// <param name="Salary">Оплата труда</param>
         /// <param name="Charge">Количество проектов</param>
-        public Worker(int Tabnum, string FirstName, string LastName, int Age, string Position, uint Salary, Department Department, int Charge)
+        public Worker(int Tabnum, string FirstName, string LastName, int Age, string Position, int Salary, Department Department, int Charge)
         {
             this.firstName = FirstName;
             this.lastName = LastName;
             this.position = Position;
-            this.department = Department;
+            this.department = Department.Name;
             this.salary = Salary;
             this.tabnum = Tabnum;
             this.charge = Charge;
             this.age = Age;
         }
 
-        public Worker(int TubNum, Department Department)
+        /// <summary>
+        /// Создание рандомного сотрудника в департаменте
+        /// </summary>
+        /// <param name="TubNum"></param>
+        /// <param name="Department"></param>
+        public Worker(int TabNum, Department Department)
         {
-            this.tabnum = TubNum;
+            this.tabnum = TabNum;
             Random rand = new Random();
            
-            // Размещение женских имен в базе данных firstNames
+            // Размещение женских имен в базе данных firstNamesF
             string[] firstNamesF = new string[] {
                 "Агата",
                 "Агния",
@@ -144,7 +152,7 @@ namespace Workers
                 "Ярослава"
 
                 };
-            // Размещение мужских имен в базе данных firstNames
+            // Размещение мужских имен в базе данных firstNamesM
             string[] firstNamesM = new string[] {
                 "Алан",
                 "Александр",
@@ -504,7 +512,7 @@ namespace Workers
 
             };
 
-            int sex = rand.Next(0, 2);
+            int sex = rand.Next(0, 2); // 0 - male, 1 - female ¯\_(ツ)_/¯
             if (sex==0)
             {
                 this.firstName = firstNamesM[rand.Next(0, 100)];
@@ -518,16 +526,17 @@ namespace Workers
 
             this.salary = 0;
             this.position = Department.Positions[0];
-            this.department = Department;
+            this.department = Department.Name;
            
             this.charge = rand.Next(1, 10);
             this.age = rand.Next(20, 67);
-
-            int numPos = PosCount(5);
-            this.position = Department.Positions[numPos];
-            this.salary = (uint)(100000 / (numPos + 1));
-            this.department.ECount++;
-            this.department.PrCount += this.charge;
+            
+            int hat = HatFitsSenka(this.Age, Department.Positions.Length);
+            
+            this.position = Department.Positions[hat];
+            this.salary = (100000 / (hat + 1));
+            Department.ECount++;
+            Department.PrCount += this.charge;
         }
 
 
@@ -540,25 +549,43 @@ namespace Workers
         /// <returns></returns>
         public string PrintWorker()
         {
-            return $"{this.tabnum,10}{this.firstName,12} {this.lastName,15} {this.age,10}  {this.position,15}  {this.salary,10} {this.department.Name,10} {this.charge,10}";
+            return $"{this.tabnum,10}{this.firstName,12} {this.lastName,15} {this.age,10}  {this.position,15}  {this.salary,10} {this.department,10} {this.charge,10}";
         }
 
+
+
+        #endregion
+
+        #region Частные методы
 
         /// <summary>
-        /// минимизирует вероятность использования значения 0
+        /// Распределяет должности в отделе
         /// </summary>
-        /// <param name="max"></param>
+        /// <param name="age">Возраст</param>
+        /// <param name="max">Количество должностей в отделе</param>
         /// <returns></returns>
-        private int PosCount(int max)
+        private int HatFitsSenka(int age, int max)
         {
             Random r = new Random();
-            int t = r.Next(0, max + 1);
-            if (t == 0)
+            int hat;
+
+            if (age < 28)
+                return r.Next(max - 2, max);
+
+            else if (age >= 55)
+                return r.Next(1, max - 2);
+
+            else hat = r.Next(0, max - 2);
+
+            if (hat == 0)
             {
-                t += r.Next(0, max + 1);
+                hat += r.Next(0, max - 4);
             }
-            return t;
+
+            return hat;
         }
+
+
         #endregion
 
         #region Свойства
@@ -581,12 +608,12 @@ namespace Workers
         /// <summary>
         /// Отдел
         /// </summary>
-        public Department Department { get { return this.department; } set { this.department = value; } }
+        public string Department { get { return this.department; } set { this.department = value; } }
 
         /// <summary>
         /// Оплата труда
         /// </summary>
-        public uint Salary { get { return this.salary; } set { this.salary = value; } }
+        public int Salary { get { return this.salary; } set { this.salary = value; } }
 
         /// <summary>
         /// Табельный номер
@@ -630,12 +657,12 @@ namespace Workers
         /// <summary>
         /// Поле "Отдел"
         /// </summary>
-        private Department department;
+        private string department;
 
         /// <summary>
         /// Поле "Оплата труда"
         /// </summary>
-        private uint salary;
+        private int salary;
 
         /// <summary>
         /// Поле "Табельный номер"
@@ -649,12 +676,7 @@ namespace Workers
 
         #endregion
 
-        #region Частные методы
-        
-
-
-
-        #endregion
+       
 
     }
 }

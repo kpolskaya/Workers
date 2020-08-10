@@ -40,11 +40,21 @@ namespace Workers
 
         #region Конструкторы
 
+        /// <summary>
+        /// Пустой конструктор
+        /// </summary>
         public Department()
         {
 
         }
 
+        /// <summary>
+        /// Констркутор со всеми полями
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <param name="CrDate"></param>
+        /// <param name="ECount"></param>
+        /// <param name="PrCount"></param>
         public Department ( string Name, DateTime CrDate, int ECount, int PrCount)
         {
             this.Name = Name;
@@ -55,22 +65,28 @@ namespace Workers
 
         }
 
-        public Department(int num/*, int q*/)       //q - максимальное количество сотрудников в отделе, для начала 100000
+        /// <summary>
+        /// Конструктор случайного отдела с номером
+        /// </summary>
+        /// <param name="num">номер отдела</param>
+        public Department(int num /*, int q*/)       //q - максимальное количество сотрудников в отделе, для начала 100000
         {
             Random rand;
-            DateTime d = Convert.ToDateTime("01.01.1990");
-            this.Name = $"Отдел  {num}";
+            DateTime d = Convert.ToDateTime("01.01.1990"); // дата создания организации 
+            this.Name = $"Отдел {num}";
             rand = new Random();
-            this.CrDate = d.AddDays (rand.Next(0, 500));
+            this.CrDate = d.AddDays((num - 1) * rand.Next(15, 31));
             this.ECount = 0;
             this.PrCount = ECount/3;
-            this.Positions = new string[] { "Начальник", "Зам.начальника", "Помощник", "Ведущий инженер", "Инженер", "Стажер" };
+            this.Positions = new string[] { "Начальник", "Зам. начальника", "Ведущий инженер", "Инженер", "Помощник", "Стажер" };
 
         }
+        #endregion
 
+        #region Методы
         public string PrintDepartment()
         {
-            return $"{this.Name,15}{this.CrDate.ToString("dd.MM.yyyy"),25} {this.ECount,15} {this.PrCount,10}";
+            return $"{this.Name,15}{this.CrDate,25:dd.MM.yyyy} {this.ECount,15} {this.PrCount,10}";
         }
         #endregion
 

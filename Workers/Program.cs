@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
@@ -185,7 +186,7 @@ namespace Workers
            
             List<Department> organization = new List<Department>();
            
-            for (int i = 1; i <= 6; i++)
+            for (int i = 0; i < 6; i++)
             {
                 organization.Add(new Department(i));
               
@@ -193,7 +194,7 @@ namespace Workers
        
             List<Worker> workers = new List<Worker>();
 
-            for (int i = 1; i <= 21; i++)
+            for (int i = 1; i <= 50; i++)
             {
                workers.Add(new Worker(i, organization[rand.Next(0, 6)]));
             }
@@ -209,32 +210,32 @@ namespace Workers
 
             /////////////////////////
 
-            SerializeWorkerList(workers, "_listWorker.xml");
+            //SerializeWorkerList(workers, "_listWorker.xml");
 
-            List<Worker> workers1 = new List<Worker>();
+            //List<Worker> workers1 = new List<Worker>();
 
-            workers1 = DeserializeWorkerList("_listWorker.xml");
+            //workers1 = DeserializeWorkerList("_listWorker.xml");
 
-            foreach (var item in workers1)
-            {
-                Console.WriteLine(item.PrintWorker());
-            }
-            Console.ReadKey();
+            //foreach (var item in workers1)
+            //{
+            //    Console.WriteLine(item.PrintWorker());
+            //}
+            //Console.ReadKey();
 
             ////////////////////////
-            string json = JsonConvert.SerializeObject(workers);
-            File.WriteAllText("_listWorker.json", json);
+            //string json = JsonConvert.SerializeObject(workers);
+            //File.WriteAllText("_listWorker.json", json);
 
-            json = File.ReadAllText("_listWorker.json");
+            //json = File.ReadAllText("_listWorker.json");
 
-            List<Worker> workers2 = new List<Worker>();
+            //List<Worker> workers2 = new List<Worker>();
 
-            workers2 = JsonConvert.DeserializeObject<List<Worker>>(json);
-            foreach (var item in workers2)
-            {
-                Console.WriteLine(item.PrintWorker());
-            }
-            Console.ReadKey();
+            //workers2 = JsonConvert.DeserializeObject<List<Worker>>(json);
+            //foreach (var item in workers2)
+            //{
+            //    Console.WriteLine(item.PrintWorker());
+            //}
+            //Console.ReadKey();
 
             /////////////////////////
 
@@ -343,7 +344,7 @@ namespace Workers
 
                     case 4:
 
-                        foundr.Salary = (uint)GetNum("Введите новую зарплату", 1, 100000);
+                        foundr.Salary = (int)GetNum("Введите новую зарплату", 1, 100000);
                         Console.WriteLine();
                         Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
                         Console.WriteLine(foundr.PrintWorker());
