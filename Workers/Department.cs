@@ -84,9 +84,9 @@ namespace Workers
         #endregion
 
         #region Методы
-        public string PrintDepartment()
+        public void PrintDepartment()
         {
-            return $"{this.Name,15}{this.CrDate,25:dd.MM.yyyy} {this.ECount,15} {this.PrCount,10}";
+            Console.WriteLine($"{this.Name,15}{this.CrDate,25:dd.MM.yyyy} {this.ECount,15} {this.PrCount,10}");
         }
         #endregion
 

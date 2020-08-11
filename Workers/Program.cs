@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Text;
 using System.Reflection;
+using System.Xml;
 
 namespace Workers
 {
@@ -136,25 +137,7 @@ namespace Workers
             return text;
         }
 
-        /// <summary>
-        /// Метод сериализации List<Worker >
-        /// </summary>
-        /// <param name="СoncreteWorker">Коллекция для сериализации</param>
-        /// <param name="Path">Путь к файлу</param>
-        static void SerializeWorkerList(List<Worker> СoncreteWorkerList, string Path)
-        {
-            // Создаем сериализатор на основе указанного типа 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Worker>));
-
-            // Создаем поток для сохранения данных
-            Stream fStream = new FileStream(Path, FileMode.Create, FileAccess.Write);
-
-            // Запускаем процесс сериализации
-            xmlSerializer.Serialize(fStream, СoncreteWorkerList);
-
-            // Закрываем поток
-            fStream.Close();
-        }
+       
 
         /// <summary>
         /// Метод десериализации Worker
@@ -182,32 +165,32 @@ namespace Workers
 
         static void Main(string[] args)
         {
-            Random rand = new Random();
-           
-            List<Department> organization = new List<Department>();
-           
-            for (int i = 0; i < 6; i++)
-            {
-                organization.Add(new Department(i));
-              
-            }
-       
-            List<Worker> workers = new List<Worker>();
+            Company company = new Company(6, 50);
+            //Random rand = new Random();
 
-            for (int i = 1; i <= 50; i++)
-            {
-               workers.Add(new Worker(i, organization[rand.Next(0, 6)]));
-            }
-                
-       
-            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+            //List<Department> organization = new List<Department>();
 
-            foreach (var item in workers)
-            {
-                Console.WriteLine(item.PrintWorker());
-            }
+            //for (int i = 0; i < 6; i++)
+            //{
+            //    organization.Add(new Department(i));
+
+            //}
+
+            //List<Worker> workers = new List<Worker>();
+
+            //for (int i = 1; i <= 50; i++)
+            //{
+            //   workers.Add(new Worker(i, organization[rand.Next(0, 6)]));
+            //}
+
+
+            company.PrintAll();
+            Console.ReadKey();
+            company.SortParams();
             Console.ReadKey();
 
+            company.SerializeWorkerList("_listWorker.xml");
+          
             /////////////////////////
 
             //SerializeWorkerList(workers, "_listWorker.xml");
@@ -239,139 +222,151 @@ namespace Workers
 
             /////////////////////////
 
-            Console.WriteLine($"{"Отдел",15}{"Дата создания",25} {"Сотрудников",15} {"Тем",10}");
+            //Console.WriteLine($"{"Отдел",15}{"Дата создания",25} {"Сотрудников",15} {"Тем",10}");
 
-            foreach (var item in organization)
-            {
-                Console.WriteLine(item.PrintDepartment());
-            }
-            Console.ReadKey();
+            //foreach (var item in Company.departments)
+            //{
+            //    Console.WriteLine(item.PrintDepartment());
+            //}
+            //Console.ReadKey();
 
 
-            //Сортировка последовательно по возраст-загрузка
+            //Сортировка последовательно по отдел-возраст-загрузка
 
-            var sortedWokers = from worker in workers
-                               orderby worker.Age, worker.Charge
-                               select worker;
+            //var sortedWorkers = from worker in workers
+            //                    orderby worker.Department, worker.Age, worker.Charge
+            //                    select worker;
 
-            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-
-            foreach (Worker w in sortedWokers)
-            {
-                Console.WriteLine(w.PrintWorker());
-            }
-            Console.ReadKey();
+            //List<Worker> sortedWorkers = workers.OrderBy(x => x.Department)
+            //                        .ThenBy(x => x.Age)
+            //                        .ThenBy(x=> x.Charge)
+            //                        .ToList();
 
 
 
-            Console.WriteLine("Создание нового сотрудника\n");
-            int indx = workers.Count + 1;
-            workers.Add(new Worker(indx, organization[rand.Next(0, 6)]));
-            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
 
-          //  Console.WriteLine(workers[indx].PrintWorker());
+            //Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
 
-            foreach (var item in workers)
-            {
-                Console.WriteLine(item.PrintWorker());
-            }
-            Console.ReadKey();
+            //foreach (Worker w in sortedWorkers)
+            //{
+            //    Console.WriteLine(w.PrintWorker());
+            //}
+            //Console.ReadKey();
 
 
-            int d = GetNum("Для удаления сотрудника введите его табельный номер", 1, workers.Count);
-            
-            Worker found = workers.Find(item => item.Tabnum == d);
 
-            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-            Console.WriteLine(found.PrintWorker());
-            Console.WriteLine();
-            int idx = workers.IndexOf(found);
-            workers.RemoveAt(idx);
+            //Console.WriteLine("Создание нового сотрудника\n");
+            //int indx = workers.Count + 1;
+            //workers.Add(new Worker(indx, organization[rand.Next(0, 6)]));
+            //Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
 
-            foreach (var item in workers)
-            {
-                Console.WriteLine(item.PrintWorker());
-            }
-            Console.ReadKey();
+            //  Console.WriteLine(workers[indx].PrintWorker());
+
+            //foreach (var item in workers)
+            //{
+            //    Console.WriteLine(item.PrintWorker());
+            //}
+            //Console.ReadKey();
 
 
-            do
-            {
-                Console.WriteLine("РЕДАКТИРОВАНИЕ ДАННЫХ СОТРУДНИКА\n");
-                Console.WriteLine("для изменения должности и отдела вам необходимо уволить сотрудника и принять его на работу заново \n");
-                int r = GetNum("Введите табельный номер для редактирования данных сотрудника", 1, workers.Count);
-                Worker foundr = workers.Find(item => item.Tabnum == r);
+            //int d = GetNum("Для удаления сотрудника введите его табельный номер", 1, workers.Count);
 
-                Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-                Console.WriteLine(foundr.PrintWorker());
+            //Worker found = workers.Find(item => item.Tabnum == d);
 
-                Console.WriteLine("\nДля изменения имени нажмите 1");
-                Console.WriteLine("Для изменения фамилии нажмите 2");
-                Console.WriteLine("Для изменения возраста нажмите 3");
-                Console.WriteLine("Для изменения зарплаты нажмите 4");
-                Console.WriteLine($"Для изменения количества проектов нажмите 5\n");
+            //Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+            //Console.WriteLine(found.PrintWorker());
+            //Console.WriteLine();
+            //int idx = workers.IndexOf(found);
+            //workers.RemoveAt(idx);
 
-                //var ans = Console.ReadKey(true).KeyChar;
+            //foreach (var item in workers)
+            //{
+            //    Console.WriteLine(item.PrintWorker());
+            //}
+            //Console.ReadKey();
 
-                int ans = GetNum("Выберите нужное действие", 1, 6);
-                Console.WriteLine();
-              
-                switch (ans)
-                {
-                    case 1:
 
-                        foundr.FirstName = GetText("Введите новое имя");
-                        Console.WriteLine();
-                        Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-                        Console.WriteLine(foundr.PrintWorker());
-                        break;
+            //do
+            //{
+            //    Console.WriteLine("РЕДАКТИРОВАНИЕ ДАННЫХ СОТРУДНИКА\n");
+            //    Console.WriteLine("для изменения должности и отдела вам необходимо уволить сотрудника и принять его на работу заново \n");
+            //    int r = GetNum("Введите табельный номер для редактирования данных сотрудника", 1, workers.Count);
+            //    Worker foundr = workers.Find(item => item.Tabnum == r);
 
-                    case 2:
+            //    Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+            //    Console.WriteLine(foundr.PrintWorker());
 
-                        foundr.LastName = GetText("Введите новую фамилию");
-                        Console.WriteLine();
-                        Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-                        Console.WriteLine(foundr.PrintWorker());
-                        break;
-                        
-                    case 3:
+            //    Console.WriteLine("\nДля изменения имени нажмите 1");
+            //    Console.WriteLine("Для изменения фамилии нажмите 2");
+            //    Console.WriteLine("Для изменения возраста нажмите 3");
+            //    Console.WriteLine("Для изменения зарплаты нажмите 4");
+            //    Console.WriteLine($"Для изменения количества проектов нажмите 5\n");
 
-                        foundr.Age = GetNum("Введите новый возраст",1,120);
-                        Console.WriteLine();
-                        Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-                        Console.WriteLine(foundr.PrintWorker());
-                        break;
+            //    //var ans = Console.ReadKey(true).KeyChar;
 
-                    case 4:
+            //    int ans = GetNum("Выберите нужное действие", 1, 6);
+            //    Console.WriteLine();
 
-                        foundr.Salary = (int)GetNum("Введите новую зарплату", 1, 100000);
-                        Console.WriteLine();
-                        Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-                        Console.WriteLine(foundr.PrintWorker());
-                        break;
+            //    switch (ans)
+            //    {
+            //        case 1:
 
-                    case 5:
+            //            foundr.FirstName = GetText("Введите новое имя");
+            //            foundr.LastName = GetText("Введите новую фамилию");
+            //            foundr.Age = GetNum("Введите новый возраст", 1, 120);
+            //            foundr.Salary = (int)GetNum("Введите новую зарплату", 1, 100000);
+            //            foundr.Charge = GetNum("Введите новую загрузку", 0, 100);
+            //            Console.WriteLine();
+            //            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+            //            Console.WriteLine(foundr.PrintWorker());
+            //            break;
 
-                        foundr.Charge = GetNum("Введите новую загрузку", 0, 100);
-                        Console.WriteLine();
-                        Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-                        Console.WriteLine(foundr.PrintWorker());
-                        break;
+            //        case 2:
 
-                        default:                                                                                          
-                            Console.WriteLine("Выбрано неизвестное действие\n");
-                            break;
-                }
+            //            foundr.LastName = GetText("Введите новую фамилию");
+            //            Console.WriteLine();
+            //            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+            //            Console.WriteLine(foundr.PrintWorker());
+            //            break;
 
-            }
-            while (Repeat());
+            //        case 3:
 
-            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+            //            foundr.Age = GetNum("Введите новый возраст",1,120);
+            //            Console.WriteLine();
+            //            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+            //            Console.WriteLine(foundr.PrintWorker());
+            //            break;
 
-            foreach (var item in workers)
-            {
-                Console.WriteLine(item.PrintWorker());
-            }
+            //        case 4:
+
+            //            foundr.Salary = (int)GetNum("Введите новую зарплату", 1, 100000);
+            //            Console.WriteLine();
+            //            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+            //            Console.WriteLine(foundr.PrintWorker());
+            //            break;
+
+            //        case 5:
+
+
+            //            Console.WriteLine();
+            //            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+            //            Console.WriteLine(foundr.PrintWorker());
+            //            break;
+
+            //            default:                                                                                          
+            //                Console.WriteLine("Выбрано неизвестное действие\n");
+            //                break;
+            //    }
+
+            //}
+            //while (Repeat());
+
+            //Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+
+            //foreach (var item in workers)
+            //{
+            //    Console.WriteLine(item.PrintWorker());
+            //}
             Console.ReadKey();
 
           

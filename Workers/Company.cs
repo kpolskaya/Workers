@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Workers
 {   
@@ -84,10 +87,52 @@ namespace Workers
             this.departments[i].PrintDepartment();
         }
 
+        public void PrintAll()
+        {
+            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
 
+            for (int i = 0; i < this.workers.Count; i++)
+            {
+               PrintPerson(i);
+            }
+           
+        }
 
+        public void SortParams()
+        {
+            List<Worker> sortedWorkers = workers.OrderBy(x => x.Department)
+                                   .ThenBy(x => x.Age)
+                                   .ThenBy(x => x.Salary)
+                                   .ToList();
+            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
 
+            for (int i = 0; i <sortedWorkers.Count; i++)
+            {
+                sortedWorkers[i].PrintWorker();
+            }
+        }
 
+        /// <summary>
+        /// Метод сериализации List<Worker >
+        /// </summary>
+       
+        /// <param name="Path">Путь к файлу</param>
+        public void SerializeWorkerList(string Path)
+        {
+            // Создаем сериализатор на основе указанного типа 
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Worker>));
+
+            // Создаем поток для сохранения данных
+            Stream fStream = new FileStream(Path, FileMode.Create, FileAccess.Write);
+
+            // Запускаем процесс сериализации
+            xmlSerializer.Serialize(fStream, this.workers);
+
+            // Закрываем поток
+            fStream.Close();
+        }
+
+      
 
         #endregion
 

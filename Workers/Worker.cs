@@ -547,9 +547,9 @@ namespace Workers
         /// печать информации о сотруднике
         /// </summary>
         /// <returns></returns>
-        public string PrintWorker()
+        public void PrintWorker()
         {
-            return $"{this.tabnum,10}{this.firstName,12} {this.lastName,15} {this.age,10}  {this.position,15}  {this.salary,10} {this.department,10} {this.charge,10}";
+            Console.WriteLine($"{this.tabnum,10}{this.firstName,12} {this.lastName,15} {this.age,10}  {this.position,15}  {this.salary,10} {this.department,10} {this.charge,10}");
         }
 
 
