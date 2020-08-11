@@ -88,6 +88,9 @@ namespace Workers
             this.departments[i].PrintDepartment();
         }
 
+        /// <summary>
+        /// Выводит на консоль всех работников
+        /// </summary>
         public void PrintAll()
         {
             Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
@@ -99,7 +102,10 @@ namespace Workers
            
         }
 
-        public void SortParams()
+        /// <summary>
+        /// Сортирует работников по возрасту и зарплате внутри отдела
+        /// </summary>
+        public void SortByThreeParams()
         {
             List<Worker> sortedWorkers = workers.OrderBy(x => x.Department)
                                    .ThenBy(x => x.Age)
@@ -107,16 +113,15 @@ namespace Workers
                                    .ToList();
             Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
 
-            for (int i = 0; i <sortedWorkers.Count; i++)
+            for (int i = 0; i < sortedWorkers.Count; i++)
             {
                 sortedWorkers[i].PrintWorker();
             }
         }
 
         /// <summary>
-        /// Метод сериализации List<Worker >
+        /// Сериализация списка работников
         /// </summary>
-       
         /// <param name="Path">Путь к файлу</param>
         public void SerializeWorkerList(string Path)
         {
@@ -133,6 +138,9 @@ namespace Workers
             fStream.Close();
         }
 
+        /// <summary>
+        /// Сериализация всей структуры компании
+        /// </summary>
         public void SerializeCompany()
         {
             XElement xCompany = new XElement("COMPANY");
@@ -184,15 +192,77 @@ namespace Workers
                         xWorker.Add(xCharge);
                         xDepartment.Add(xWorker);
                     }
-                   
                 }
                 xCompany.Add(xDepartment);
-
-               
-
             }
 
             xCompany.Save("_company.xml");
+        }
+
+        /// <summary>
+        /// Конструктор компании из xml файла
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="dummy">фейковый параметр - любая строка (чтобы отличить от другого конструктора из json)</param>
+        public Company(string path, string dummy) // потом сделаем общий конструктор, который будет выбирать по расширению файла, какой десериализатор запускать
+        {
+
+
+            this.departments = new List<Department>();
+            this.workers = new List<Worker>();
+            this.deptByName = new Dictionary<string, Department>();
+            this.tabNums = new SortedSet<int>();
+
+            //читаем весь файл
+            string xml = File.ReadAllText(path);
+
+            //разбираем его в коллекцию департаментов
+            var colOfDepts = XDocument.Parse(xml)
+                                       .Descendants("COMPANY")
+                                       .Descendants("DEPARTMENT")
+                                       .ToList();
+
+            //переписываем атрибуты и элементы каждого департамента в соответствующие поля
+            foreach (var item in colOfDepts)
+            {
+                string deptName = item.Attribute("name").Value;
+                DateTime crDate = Convert.ToDateTime(item.Attribute("date").Value);
+                int eCount = Convert.ToInt32(item.Attribute("ecount").Value);
+                int prCount = Convert.ToInt32(item.Attribute("prcount").Value);
+
+                //создаем запись в списке департаментов
+                Department tempDept = new Department(deptName, crDate, eCount, prCount);
+                this.departments.Add(tempDept);
+                //и запись в словаре
+                this.deptByName.Add(tempDept.Name, tempDept);
+
+                int num;
+                string firstName;
+                string lastName;
+                int age;
+                string position;
+                int salary;
+                int charge;
+
+                //переписываем атрибуты каждого worker в соответствующе поля
+                foreach (var d in item.Elements("WORKER"))
+                {
+                    num = Convert.ToInt32(d.Attribute("num").Value);
+                    firstName = d.Attribute("firstname").Value;
+                    lastName = d.Attribute("lastname").Value;
+                    age = Convert.ToInt32(d.Attribute("age").Value);
+                    position = d.Attribute("position").Value;
+                    salary = Convert.ToInt32(d.Attribute("salary").Value);
+                    charge = Convert.ToInt32(d.Attribute("charge").Value);
+
+                    Worker tempWorker = new Worker(num, firstName, lastName, age, position, salary, tempDept, charge);
+                    this.workers.Add(tempWorker);
+                    this.tabNums.Add(tempWorker.Tabnum);
+
+                }
+
+            }
+
         }
       
 

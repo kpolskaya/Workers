@@ -165,7 +165,14 @@ namespace Workers
 
         static void Main(string[] args)
         {
-            Company company = new Company(6, 50);
+
+            Company company = new Company(10, 100);
+            
+            //сначала нужно создать и записать базу ---------------------------->
+            //Company company = new Company(@"_company.xml", "");
+            //-------------------------------------------------------------------
+
+
             //Random rand = new Random();
 
             //List<Department> organization = new List<Department>();
@@ -185,12 +192,17 @@ namespace Workers
 
 
             company.PrintAll();
+            Console.WriteLine();
+            for (int i = 0; i < 6; i++)
+            {
+                company.PrintDeptInfo(i);
+            }
             Console.ReadKey();
             //company.SortParams();
             //Console.ReadKey();
 
             //company.SerializeWorkerList("_listWorker.xml");
-            company.SerializeCompany();
+            //company.SerializeCompany();
 
           
             /////////////////////////
