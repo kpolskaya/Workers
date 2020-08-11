@@ -186,10 +186,12 @@ namespace Workers
 
             company.PrintAll();
             Console.ReadKey();
-            company.SortParams();
-            Console.ReadKey();
+            //company.SortParams();
+            //Console.ReadKey();
 
-            company.SerializeWorkerList("_listWorker.xml");
+            //company.SerializeWorkerList("_listWorker.xml");
+            company.SerializeCompany();
+
           
             /////////////////////////
 

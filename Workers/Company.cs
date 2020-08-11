@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using System.Xml.Linq;
 
 namespace Workers
 {   
@@ -132,6 +133,67 @@ namespace Workers
             fStream.Close();
         }
 
+        public void SerializeCompany()
+        {
+            XElement xCompany = new XElement("COMPANY");
+            XAttribute xCompanyName = new XAttribute("name", "ACME Corporation");
+            xCompany.Add(xCompanyName);
+
+            
+
+            for (int i = 0; i < this.departments.Count; i++)
+            {
+                XElement xDepartment = new XElement("DEPARTMENT");
+                XAttribute xDeptName = new XAttribute("name", this.departments[i].Name);
+                XAttribute xCrDate = new XAttribute("date", this.departments[i].CrDate.ToString("dd.MM.yyyy"));
+                XAttribute xEmplCount = new XAttribute("ecount", this.departments[i].ECount);
+                XAttribute xPrjCount = new XAttribute("prcount", this.departments[i].PrCount);
+                
+                xDepartment.Add(xDeptName);
+                xDepartment.Add(xCrDate);
+                xDepartment.Add(xEmplCount);
+                xDepartment.Add(xPrjCount);
+
+                //XElement xStaff = new XElement("Staff");
+                for (int s = 0; s < this.departments[i].Positions.Length; s++)
+                {
+                    XElement xStaff = new XElement("Staff");
+                    xStaff.Add(this.departments[i].Positions[s]);
+                    xDepartment.Add(xStaff);
+                }
+
+                for (int j = 0; j < this.workers.Count; j++)
+                { 
+                    XElement xWorker = new XElement("WORKER");
+                    XAttribute xNum = new XAttribute("num", this.workers[j].Tabnum);
+                    XAttribute xFirstName = new XAttribute("firstname", this.workers[j].FirstName);
+                    XAttribute xLastName = new XAttribute("lastname", this.workers[j].LastName);
+                    XAttribute xAge = new XAttribute("age", this.workers[j].Age);
+                    XAttribute xSalary = new XAttribute("salary", this.workers[j].Salary);
+                    XAttribute xPosition = new XAttribute("position", this.workers[j].Position);
+                    XAttribute xCharge = new XAttribute("charge", this.workers[j].Charge);
+
+                    if (this.workers[j].Department == this.departments[i].Name)
+                    {
+                        xWorker.Add(xNum);
+                        xWorker.Add(xFirstName);
+                        xWorker.Add(xLastName);
+                        xWorker.Add(xAge);
+                        xWorker.Add(xSalary);
+                        xWorker.Add(xPosition);
+                        xWorker.Add(xCharge);
+                        xDepartment.Add(xWorker);
+                    }
+                   
+                }
+                xCompany.Add(xDepartment);
+
+               
+
+            }
+
+            xCompany.Save("_company.xml");
+        }
       
 
         #endregion
