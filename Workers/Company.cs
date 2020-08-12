@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using System.Xml.Linq;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Workers
 {   
@@ -139,8 +141,77 @@ namespace Workers
         }
 
         /// <summary>
-        /// Сериализация всей структуры компании
+        /// Сериализация JSON
         /// </summary>
+        public void SerializeCompanyJSON()
+        {
+            JArray jArray = new JArray();
+
+            Company company = new Company(10, 100);
+            JObject Jcompany = new JObject();
+            Jcompany["name"] = "ACME Corporation";
+           
+          
+
+            for (int i = 0; i < 10; i++)
+            {
+                JObject Jdepartment = new JObject();
+                Jdepartment["name"] = this.departments[i].Name;
+                Jdepartment["date"] = this.departments[i].CrDate;
+                Jdepartment["ecount"] = this.departments[i].ECount;
+                Jdepartment["prcount"] = this.departments[i].PrCount;
+              
+                JArray jstaff = new JArray();
+               
+                for (int s = 0; s < 6; s++)
+                {
+                    Jdepartment["staff"] = this.departments[i].Positions[s];
+                    jstaff.Add(Jdepartment["staff"]);
+                }
+                Jdepartment["staff"] = jstaff;
+
+                for (int j = 0; j < this.workers.Count; j++)
+                {
+                    JObject JWorker = new JObject();
+                    JWorker["num"] = this.workers[j].Tabnum;
+                    JWorker["firstname"] = this.workers[j].FirstName;
+                    JWorker["Lastname"] = this.workers[j].LastName;
+                    JWorker["age"] = this.workers[j].Age;
+                    JWorker["salary"] = this.workers[j].Salary;
+                    JWorker["position"] = this.workers[j].Position;
+                    JWorker["charge"] = this.workers[j].Charge;
+
+                    if (this.workers[j].Department == this.departments[i].Name)
+                    {
+                        jArray.Add(JWorker);
+                    }
+
+                }
+
+
+                jArray.Add(Jdepartment);
+            }
+            jArray.Add(Jcompany);
+
+            File.WriteAllText("comp1.json", (jArray.ToString()));
+        }
+
+        /// <summary>
+        /// Конструктор компании из JSON файла
+        /// </summary>
+        /// <param name="path"></param>
+
+        public Company(string path)
+        {
+            this.departments = new List<Department>();
+            this.workers = new List<Worker>();
+            this.deptByName = new Dictionary<string, Department>();
+            this.tabNums = new SortedSet<int>();
+
+          
+        }
+
+
         public void SerializeCompany()
         {
             XElement xCompany = new XElement("COMPANY");
@@ -275,22 +346,22 @@ namespace Workers
         /// <summary>
         /// Список отделов
         /// </summary>
-        List<Department> departments;
+        public List<Department> departments;
 
         /// <summary>
         /// Список работников
         /// </summary>
-        List<Worker> workers;
+        public List<Worker> workers;
 
         /// <summary>
         /// Словарь названий отделов
         /// </summary>
-        Dictionary<string, Department> deptByName;
+        public Dictionary<string, Department> deptByName;
 
         /// <summary>
         /// Список занятых табельных номеров
         /// </summary>
-        SortedSet<int> tabNums; // как-нибудь прикрутим и его
+        public SortedSet<int> tabNums; // как-нибудь прикрутим и его
 
         #endregion
 

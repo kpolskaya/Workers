@@ -9,6 +9,8 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Reflection;
 using System.Xml;
+using System.Runtime.Serialization.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Workers
 {
@@ -204,7 +206,7 @@ namespace Workers
             //company.SerializeWorkerList("_listWorker.xml");
             //company.SerializeCompany();
 
-          
+
             /////////////////////////
 
             //SerializeWorkerList(workers, "_listWorker.xml");
@@ -220,19 +222,33 @@ namespace Workers
             //Console.ReadKey();
 
             ////////////////////////
-            //string json = JsonConvert.SerializeObject(workers);
-            //File.WriteAllText("_listWorker.json", json);
+            //string json = JsonConvert.SerializeObject(company);
+            //File.WriteAllText("comp1.json", json);
+            //JsonSerializer serializer = new JsonSerializer();
+            //serializer.Converters.Add(new JavaScriptDateTimeConverter());
+            //serializer.NullValueHandling = NullValueHandling.Ignore;
 
-            //json = File.ReadAllText("_listWorker.json");
-
-            //List<Worker> workers2 = new List<Worker>();
-
-            //workers2 = JsonConvert.DeserializeObject<List<Worker>>(json);
-            //foreach (var item in workers2)
+            //using (StreamWriter sw = new StreamWriter("json.txt"))
+            //using (JsonWriter writer = new JsonTextWriter(sw))
             //{
-            //    Console.WriteLine(item.PrintWorker());
+            //    serializer.Serialize(writer, company);
+
             //}
-            //Console.ReadKey();
+
+            company.SerializeCompanyJSON();
+
+            
+
+           // string jdepartment1 = File.ReadAllText("comp1.json");
+
+           // Company company1 = new Company(10, 100);
+
+           //company1 = JsonConvert.DeserializeObject< Company company1>;
+           // foreach (var item in workers2)
+           // {
+           //     Console.WriteLine(item.PrintWorker());
+           // }
+            Console.ReadKey();
 
             /////////////////////////
 
