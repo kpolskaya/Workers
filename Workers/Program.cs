@@ -250,6 +250,16 @@ namespace Workers
            // }
             Console.ReadKey();
 
+            Company company1 = new Company("comp1.json");
+            company1.PrintAll();
+            Console.WriteLine();
+            for (int i = 0; i < 6; i++)
+            {
+                company1.PrintDeptInfo(i);
+            }
+            Console.ReadKey();
+
+
             /////////////////////////
 
             //Console.WriteLine($"{"Отдел",15}{"Дата создания",25} {"Сотрудников",15} {"Тем",10}");

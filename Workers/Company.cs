@@ -148,12 +148,27 @@ namespace Workers
             JArray jArray = new JArray();
 
             Company company = new Company(10, 100);
+            deptByName = new Dictionary<string, Department>();
+            tabNums = new SortedSet<int>();
+
+            JObject Jdeptbyname = new JObject();
             JObject Jcompany = new JObject();
+            JObject JTabnum = new JObject();
             Jcompany["name"] = "ACME Corporation";
+
+            //for (int i = 0; i < deptByName.Count; i++)
+            //{
+            //    Jdeptbyname[i] = deptByName[this.departments];
+            //}
+
+            //for (int i = 0; i < tabNums.Count; i++)
+            //{
+            //    JTabnum[i] = tabNums[i];
+            //}
            
           
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < this.departments.Count; i++)
             {
                 JObject Jdepartment = new JObject();
                 Jdepartment["name"] = this.departments[i].Name;
@@ -163,11 +178,11 @@ namespace Workers
               
                 JArray jstaff = new JArray();
                
-                for (int s = 0; s < 6; s++)
+                for (int s = 0; s < this.departments[i].Positions.Length; s++)
                 {
                     Jdepartment["staff"] = this.departments[i].Positions[s];
                     jstaff.Add(Jdepartment["staff"]);
-                }
+                                    }
                 Jdepartment["staff"] = jstaff;
 
                 for (int j = 0; j < this.workers.Count; j++)
@@ -179,6 +194,7 @@ namespace Workers
                     JWorker["age"] = this.workers[j].Age;
                     JWorker["salary"] = this.workers[j].Salary;
                     JWorker["position"] = this.workers[j].Position;
+                    JWorker["department"] = this.workers[j].Department;
                     JWorker["charge"] = this.workers[j].Charge;
 
                     if (this.workers[j].Department == this.departments[i].Name)
@@ -192,6 +208,9 @@ namespace Workers
                 jArray.Add(Jdepartment);
             }
             jArray.Add(Jcompany);
+            jArray.Add(JTabnum);
+            jArray.Add(Jdeptbyname);
+
 
             File.WriteAllText("comp1.json", (jArray.ToString()));
         }
@@ -203,15 +222,21 @@ namespace Workers
 
         public Company(string path)
         {
+            string json = File.ReadAllText(path);
+            Company company = new Company(10, 100);
             this.departments = new List<Department>();
             this.workers = new List<Worker>();
             this.deptByName = new Dictionary<string, Department>();
             this.tabNums = new SortedSet<int>();
 
-          
+            //company = JsonConvert.DeserializeObject < Company >(json);
+            departments = JsonConvert.DeserializeObject < List < Department >> (json);
+            workers = JsonConvert.DeserializeObject<List<Worker>>(json);
         }
 
-
+/// <summary>
+/// 
+/// </summary>
         public void SerializeCompany()
         {
             XElement xCompany = new XElement("COMPANY");
