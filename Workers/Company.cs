@@ -146,27 +146,15 @@ namespace Workers
         public void SerializeCompanyJSON()
         {
             JArray jArray = new JArray();
+            //deptByName = new Dictionary<string, Department>();
+            //tabNums = new SortedSet<int>();
 
-            Company company = new Company(10, 100);
-            deptByName = new Dictionary<string, Department>();
-            tabNums = new SortedSet<int>();
-
-            JObject Jdeptbyname = new JObject();
+            //JObject Jdeptbyname = new JObject();
             JObject Jcompany = new JObject();
-            JObject JTabnum = new JObject();
-            Jcompany["name"] = "ACME Corporation";
+            //JObject JTabnum = new JObject();
+            //Jcompany["name"] = "ACME Corporation";
+            //jArray.Add(Jcompany);
 
-            //for (int i = 0; i < deptByName.Count; i++)
-            //{
-            //    Jdeptbyname[i] = deptByName[this.departments];
-            //}
-
-            //for (int i = 0; i < tabNums.Count; i++)
-            //{
-            //    JTabnum[i] = tabNums[i];
-            //}
-           
-          
 
             for (int i = 0; i < this.departments.Count; i++)
             {
@@ -175,20 +163,23 @@ namespace Workers
                 Jdepartment["date"] = this.departments[i].CrDate;
                 Jdepartment["ecount"] = this.departments[i].ECount;
                 Jdepartment["prcount"] = this.departments[i].PrCount;
-              
+                //Jdeptbyname["key"] = this.departments[i].Name;
+
+               
                 JArray jstaff = new JArray();
                
                 for (int s = 0; s < this.departments[i].Positions.Length; s++)
                 {
                     Jdepartment["staff"] = this.departments[i].Positions[s];
                     jstaff.Add(Jdepartment["staff"]);
-                                    }
+                }
                 Jdepartment["staff"] = jstaff;
-
-                for (int j = 0; j < this.workers.Count; j++)
+                jArray.Add(Jdepartment);
+            }
+            for (int j = 0; j < this.workers.Count; j++)
                 {
                     JObject JWorker = new JObject();
-                    JWorker["num"] = this.workers[j].Tabnum;
+                    JWorker["tabnum"] = this.workers[j].Tabnum;
                     JWorker["firstname"] = this.workers[j].FirstName;
                     JWorker["Lastname"] = this.workers[j].LastName;
                     JWorker["age"] = this.workers[j].Age;
@@ -196,22 +187,16 @@ namespace Workers
                     JWorker["position"] = this.workers[j].Position;
                     JWorker["department"] = this.workers[j].Department;
                     JWorker["charge"] = this.workers[j].Charge;
-
-                    if (this.workers[j].Department == this.departments[i].Name)
-                    {
-                        jArray.Add(JWorker);
-                    }
-
+                    //if (this.workers[j].Department == this.departments[i].Name)
+                    jArray.Add(JWorker); 
+  
                 }
 
 
-                jArray.Add(Jdepartment);
-            }
-            jArray.Add(Jcompany);
-            jArray.Add(JTabnum);
-            jArray.Add(Jdeptbyname);
 
-
+            //jArray.Add(JTabnum);
+            //jArray.Add(Jdeptbyname);
+            string json = JsonConvert.SerializeObject(jArray);
             File.WriteAllText("comp1.json", (jArray.ToString()));
         }
 
@@ -223,15 +208,42 @@ namespace Workers
         public Company(string path)
         {
             string json = File.ReadAllText(path);
-            Company company = new Company(10, 100);
-            this.departments = new List<Department>();
-            this.workers = new List<Worker>();
             this.deptByName = new Dictionary<string, Department>();
             this.tabNums = new SortedSet<int>();
+            this.departments = new List<Department>();
+            this.workers = new List<Worker>();
 
-            //company = JsonConvert.DeserializeObject < Company >(json);
-            departments = JsonConvert.DeserializeObject < List < Department >> (json);
-            workers = JsonConvert.DeserializeObject<List<Worker>>(json);
+            dynamic parseJson = JsonConvert.DeserializeObject(json);
+            
+            for (int i = 0; i < 10; i++)
+            {
+                string deptName = parseJson[i].name; ;
+                DateTime crDate = Convert.ToDateTime(parseJson[i].date);
+                int eCount = Convert.ToInt32(parseJson[i].ecount);
+                int prCount = Convert.ToInt32(parseJson[i].prcount);
+                //string staff[] = parseJson[0].staff[];
+                Department tempDept = new Department(deptName, crDate, eCount, prCount/*,staff*/);
+                this.departments.Add(tempDept);
+                this.deptByName.Add(tempDept.Name, tempDept);/// this.departments[ this.departments.Count-1]
+            }
+
+
+            for (int i = 10; i < 110; i++)
+            {
+                int num = Convert.ToInt32(parseJson[i].tabnum);
+                string firstName = parseJson[i].firstname;
+                string lastName = parseJson[i].Lastname;
+                int age = Convert.ToInt32(parseJson[i].age);
+                string position = parseJson[i].position;
+                string department = parseJson[i].department;
+                int salary = Convert.ToInt32(parseJson[i].salary);
+                int charge = Convert.ToInt32(parseJson[i].charge);
+
+                Worker tempWorker = new Worker(num, firstName, lastName, age, position, salary, this.deptByName[department], charge);
+                this.workers.Add(tempWorker);
+                this.tabNums.Add(tempWorker.Tabnum);
+            }
+         
         }
 
 /// <summary>

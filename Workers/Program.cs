@@ -234,7 +234,8 @@ namespace Workers
             //    serializer.Serialize(writer, company);
 
             //}
-
+            //company.SerializeCompany();
+            //Console.ReadKey();
             company.SerializeCompanyJSON();
 
             
@@ -253,10 +254,10 @@ namespace Workers
             Company company1 = new Company("comp1.json");
             company1.PrintAll();
             Console.WriteLine();
-            for (int i = 0; i < 6; i++)
-            {
-                company1.PrintDeptInfo(i);
-            }
+            //for (int i = 0; i < 6; i++)
+            //{
+            //    company1.PrintDeptInfo(i);
+            //}
             Console.ReadKey();
 
 
