@@ -33,7 +33,7 @@ namespace Workers
         /// <summary>
         /// Список должностей
         /// </summary>
-        public string[] Positions { get; set; }
+        public List<string> Positions { get; set; }
 
 
         #endregion
@@ -55,13 +55,13 @@ namespace Workers
         /// <param name="CrDate"></param>
         /// <param name="ECount"></param>
         /// <param name="PrCount"></param>
-        public Department ( string Name, DateTime CrDate, int ECount, int PrCount)
+        public Department ( string Name, DateTime CrDate, int ECount, int PrCount, List<string> Positions)
         {
             this.Name = Name;
             this.CrDate = CrDate;
             this.ECount = ECount;
             this.PrCount = PrCount;
-            this.Positions = new string[] { "Начальник", "Зам.начальника", "Помощник", "Ведущий инженер", "Инженер", "Стажер" };
+            this.Positions = Positions;
 
         }
 
@@ -78,7 +78,7 @@ namespace Workers
             this.CrDate = d.AddDays((num - 1) * rand.Next(15, 31));
             this.ECount = 0;
             this.PrCount = ECount/3;
-            this.Positions = new string[] { "Начальник", "Зам. начальника", "Ведущий инженер", "Инженер", "Помощник", "Стажер" };
+            this.Positions = new List<string> { "Начальник", "Зам. начальника", "Ведущий инженер", "Инженер", "Помощник", "Стажер" };
 
         }
         #endregion
@@ -86,7 +86,10 @@ namespace Workers
         #region Методы
         public void PrintDepartment()
         {
-            Console.WriteLine($"{this.Name,15}{this.CrDate,25:dd.MM.yyyy} {this.ECount,15} {this.PrCount,10}");
+            Console.Write($"{this.Name,15}{this.CrDate, 15:dd.MM.yyyy} {this.ECount,17} {this.PrCount,17}");
+            foreach (string item in this.Positions)
+                Console.Write($"{item, 18}\n{" ",66}");
+            Console.WriteLine();
         }
         #endregion
 

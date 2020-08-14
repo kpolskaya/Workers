@@ -531,7 +531,7 @@ namespace Workers
             this.charge = rand.Next(1, 10);
             this.age = rand.Next(20, 67);
             
-            int hat = HatFitsSenka(this.Age, Department.Positions.Length);
+            int hat = HatFitsSenka(this.Age, Department.Positions.Count);
             
             this.position = Department.Positions[hat];
             this.salary = (100000 / (hat + 1));
@@ -570,16 +570,16 @@ namespace Workers
             int hat;
 
             if (age < 28)
-                return r.Next(max - 2, max);
+                return r.Next(max/2 + 1, max);
 
             else if (age >= 55)
-                return r.Next(1, max - 2);
+                return r.Next(1, max/2 + 1);
 
-            else hat = r.Next(0, max - 2);
+            else hat = r.Next(0, max/2 + 1);
 
             if (hat == 0)
             {
-                hat += r.Next(0, max - 4);
+                hat += r.Next(0, max/3);
             }
 
             return hat;

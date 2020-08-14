@@ -193,13 +193,11 @@ namespace Workers
             //}
 
 
-            company.PrintAll();
+            company.PrintPanel();
             Console.WriteLine();
-            for (int i = 0; i < 6; i++)
-            {
-                company.PrintDeptInfo(i);
-            }
-            Console.ReadKey();
+
+            company.PrintDepartments();
+            //Console.ReadKey();
             //company.SortParams();
             //Console.ReadKey();
 
@@ -234,9 +232,12 @@ namespace Workers
             //    serializer.Serialize(writer, company);
 
             //}
-            //company.SerializeCompany();
-            //Console.ReadKey();
-            company.SerializeCompanyJSON();
+            company.SerializeCompanyXML();
+            
+
+
+            Console.ReadKey();
+            //company.SerializeCompanyJSON();
 
             
 
@@ -249,17 +250,18 @@ namespace Workers
            // {
            //     Console.WriteLine(item.PrintWorker());
            // }
-            Console.ReadKey();
+           // Console.ReadKey();
 
-            Company company1 = new Company("comp1.json");
-            company1.PrintAll();
+
+
+            Company company1 = new Company("_company.xml", "xml");
+            int victim = GetNum("Кого выгнать? Введите табельный номер.", 1, 99);
+            company1.Fire(victim);
+
+            company1.PrintPanel();
             Console.WriteLine();
-            //for (int i = 0; i < 6; i++)
-            //{
-            //    company1.PrintDeptInfo(i);
-            //}
-            Console.ReadKey();
-
+            company1.PrintDepartments();
+           
 
             /////////////////////////
 
