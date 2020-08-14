@@ -122,9 +122,9 @@ namespace Workers
                 int prCount = Convert.ToInt32(item.Attribute("prcount").Value);
 
                 List<string> staff = new List<string>();
-                foreach (string iStaff in item.Elements("Staff"))
+                foreach (string s in item.Elements("Staff"))
                 {
-                    staff.Add(iStaff);
+                    staff.Add(s);
                 }
 
                 //создаем запись в списке департаментов
@@ -142,15 +142,15 @@ namespace Workers
                 int charge;
 
                 //переписываем атрибуты каждого worker в соответствующе поля
-                foreach (var d in item.Elements("WORKER"))
+                foreach (var w in item.Elements("WORKER"))
                 {
-                    num = Convert.ToInt32(d.Attribute("num").Value);
-                    firstName = d.Attribute("firstname").Value;
-                    lastName = d.Attribute("lastname").Value;
-                    age = Convert.ToInt32(d.Attribute("age").Value);
-                    position = d.Attribute("position").Value;
-                    salary = Convert.ToInt32(d.Attribute("salary").Value);
-                    charge = Convert.ToInt32(d.Attribute("charge").Value);
+                    num = Convert.ToInt32(w.Attribute("num").Value);
+                    firstName = w.Attribute("firstname").Value;
+                    lastName = w.Attribute("lastname").Value;
+                    age = Convert.ToInt32(w.Attribute("age").Value);
+                    position = w.Attribute("position").Value;
+                    salary = Convert.ToInt32(w.Attribute("salary").Value);
+                    charge = Convert.ToInt32(w.Attribute("charge").Value);
 
                     Worker tempWorker = new Worker(num, firstName, lastName, age, position, salary, tempDept, charge);
                     this.workers.Add(tempWorker);
