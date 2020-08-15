@@ -139,36 +139,12 @@ namespace Workers
             return text;
         }
 
-       
 
-        /// <summary>
-        /// Метод десериализации Worker
-        /// </summary>
-        /// <param name="СoncreteWorker">Экземпляр для сериализации</param>
-        /// <param name="Path">Путь к файлу</param>
-        static List<Worker> DeserializeWorkerList(string Path)
-        {
-            List<Worker> tempWorkerCol = new List<Worker>();
-            // Создаем сериализатор на основе указанного типа 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Worker>));
-
-            // Создаем поток для чтения данных
-            Stream fStream = new FileStream(Path, FileMode.Open, FileAccess.Read);
-
-            // Запускаем процесс десериализации
-            tempWorkerCol = xmlSerializer.Deserialize(fStream) as List<Worker>;
-
-            // Закрываем поток
-            fStream.Close();
-
-            // Возвращаем результат
-            return tempWorkerCol;
-        }
 
         static void Main(string[] args)
         {
 
-            Company company = new Company(10, 100);
+            Company company = new Company(3, 30);
             
             //сначала нужно создать и записать базу ---------------------------->
             //Company company = new Company(@"_company.xml", "");
@@ -194,9 +170,14 @@ namespace Workers
 
 
             company.PrintPanel();
-            Console.WriteLine();
+            Console.WriteLine("\nСортировка:");
+            company.SortByAge();
+            company.SortByDeptAgeSalary();
+            company.PrintPanel();
 
-            company.PrintDepartments();
+
+
+            //company.PrintDepartments();
             //Console.ReadKey();
             //company.SortParams();
             //Console.ReadKey();
@@ -232,33 +213,33 @@ namespace Workers
             //    serializer.Serialize(writer, company);
 
             //}
-            company.SerializeCompanyXML();
+            //company.SerializeCompanyXML();
             
 
 
-            Console.ReadKey();
+            //Console.ReadKey();
 
-            ///////////////////////////////////
-            company.SerializeCompanyJSON();
+            /////////////////////////////////////
+            //company.SerializeCompanyJSON();
 
 
 
-            Company company2 = new Company("comp1.json");
+            //Company company2 = new Company("_company.json");
 
-            Console.WriteLine("После десериализации");
-            Console.WriteLine();
+            //Console.WriteLine("После десериализации");
+            //Console.WriteLine();
 
-            company2.PrintPanel();
-            Console.WriteLine();
+            //company2.PrintPanel();
+            //Console.WriteLine();
 
-            company2.PrintDepartments();
+            //company2.PrintDepartments();
 
             //company2 = JsonConvert.DeserializeObject <List<Company>>(json);
             //foreach (var item in workers2)
             //{
             //    Console.WriteLine(item.PrintWorker());
             //}
-            Console.ReadKey();
+            //Console.ReadKey();
 
 //////////////////////////////////////////////////////////////////////
 

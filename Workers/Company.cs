@@ -22,13 +22,14 @@ namespace Workers
         /// Создает компанию в демо-режиме с рандомными сотрудниками
         /// </summary>
         /// <param name="NumOfDepts">Количество создаваемых отделов</param>
-        /// <param name="NumOfJacks">Количество создаваемых работников</param>
+        /// <param name="NumOfJacks">Количество создаваемых работников внутри каждого отдела</param>
         public Company(int NumOfDepts, int NumOfJacks)
         {
             this.departments = new List<Department>();
             this.workers = new List<Worker>();
             this.deptByName = new Dictionary<string, Department>();
             this.tabNums = new SortedSet<int>();
+            this.tabNums.Add(1);
 
             for (int i = 0; i < NumOfDepts; i++)
             {
@@ -37,11 +38,17 @@ namespace Workers
             }
 
             Random r = new Random();
-            for (int i = 0; i < NumOfJacks; i++)
+
+            for (int d = 0; d < this.departments.Count; d++)
             {
-                this.tabNums.Add(i + 1);
-                this.workers.Add(new Worker(i + 1, this.departments[r.Next(0, NumOfDepts)]));
+                for (int i = 0; i < NumOfJacks; i++)
+                {
+                    
+                    this.workers.Add(new Worker(this.tabNums.Max, this.departments[d]));
+                    this.tabNums.Add(this.tabNums.Max + 1);
+                }
             }
+            
         }
 
         /// <summary>
@@ -95,12 +102,12 @@ namespace Workers
             }
         }
 
-            /// <summary>
-            /// Конструктор компании из xml файла
-            /// </summary>
-            /// <param name="path"></param>
-            /// <param name="dummy">фейковый параметр - любая строка (чтобы отличить от другого конструктора из json)</param>
-            public Company(string path, string dummy) // потом сделаем общий конструктор, который будет выбирать по расширению файла, какой десериализатор запускать
+        /// <summary>
+        /// Конструктор компании из xml файла
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="dummy">фейковый параметр - любая строка (чтобы отличить от другого конструктора из json)</param>
+        public Company(string path, string dummy) // потом сделаем общий конструктор, который будет выбирать по расширению файла, какой десериализатор запускать
         {
 
 
@@ -114,9 +121,9 @@ namespace Workers
 
             //разбираем его в коллекцию департаментов
             var colOfDepts = XDocument.Parse(xml)
-                                       .Descendants("COMPANY")
-                                       .Descendants("DEPARTMENT")
-                                       .ToList();
+                                        .Descendants("COMPANY")
+                                        .Descendants("DEPARTMENT")
+                                        .ToList();
 
             //переписываем атрибуты и элементы каждого департамента в соответствующие поля
             foreach (var item in colOfDepts)
@@ -234,7 +241,7 @@ namespace Workers
             //jArray.Add(JTabnum);
             //jArray.Add(Jdeptbyname);
             string json = JsonConvert.SerializeObject(jArray);
-            File.WriteAllText("comp1.json", (jArray.ToString()));
+            File.WriteAllText("_company.json", (jArray.ToString()));
         }
 
 
@@ -376,12 +383,13 @@ namespace Workers
         /// <summary>
         /// Сортирует работников по возрасту и зарплате внутри отдела
         /// </summary>
-        public void SortByThreeParams() //это нужно сделать покрасивее!
+        public void SortByThreeParams() 
         {
             List<Worker> sortedWorkers = workers.OrderBy(x => x.Department)
-                                   .ThenBy(x => x.Age)
-                                   .ThenBy(x => x.Salary)
-                                   .ToList();
+                                                .ThenBy(x => x.Age)
+                                                .ThenBy(x => x.Salary)
+                                                .ToList();
+
             Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
 
             for (int i = 0; i < sortedWorkers.Count; i++)
@@ -389,6 +397,37 @@ namespace Workers
                 sortedWorkers[i].PrintWorker();
             }
         }
+
+        public void SortByDeptAgeSalary()
+        {
+            this.workers.Sort((x, y) => {
+
+                                        int ret = String.Compare(x.Department, y.Department);
+                                        if (ret != 0) return ret;
+
+                                        if (x.Age < y.Age) return -1;
+                                        else
+                                            if (x.Age > y.Age) return 1;
+
+                                        if (x.Salary < y.Salary) return -1;
+                                        else
+                                            if (x.Salary > y.Salary) return 1;
+                                        return 0;
+
+                                        });
+        }
+
+        public void SortByAge()
+        {
+            this.workers.Sort((x, y) => {
+
+                                        if (x.Age < y.Age) return -1;
+                                        if (x.Age > y.Age) return 1;
+                                        return 0;
+
+                                        });
+        }
+
 
         #endregion
 

@@ -528,8 +528,8 @@ namespace Workers
             this.position = Department.Positions[0];
             this.department = Department.Name;
            
-            this.charge = rand.Next(1, 10);
-            this.age = rand.Next(20, 67);
+            this.charge = rand.Next(1, 4);
+            this.age = rand.Next(21, 66);
             
             int hat = HatFitsSenka(this.Age, Department.Positions.Count);
             
@@ -579,7 +579,7 @@ namespace Workers
 
             if (hat == 0)
             {
-                hat += r.Next(0, max/3);
+                hat += r.Next(0, max/3 + 1);
             }
 
             return hat;

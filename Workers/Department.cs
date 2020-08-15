@@ -55,6 +55,7 @@ namespace Workers
         /// <param name="CrDate"></param>
         /// <param name="ECount"></param>
         /// <param name="PrCount"></param>
+        /// <param name="Positions">Список должностей в отделе</param>
         public Department ( string Name, DateTime CrDate, int ECount, int PrCount, List<string> Positions)
         {
             this.Name = Name;
@@ -69,7 +70,7 @@ namespace Workers
         /// Конструктор случайного отдела с номером
         /// </summary>
         /// <param name="num">номер отдела</param>
-        public Department(int num /*, int q*/)       //q - максимальное количество сотрудников в отделе, для начала 100000
+        public Department(int num)       //q - максимальное количество сотрудников в отделе???
         {
             Random rand;
             DateTime d = Convert.ToDateTime("01.01.1990"); // дата создания организации 
@@ -84,6 +85,9 @@ namespace Workers
         #endregion
 
         #region Методы
+        /// <summary>
+        /// Выводит на консоль значения полей экземпляра Department
+        /// </summary>
         public void PrintDepartment()
         {
             Console.Write($"{this.Name,15}{this.CrDate, 15:dd.MM.yyyy} {this.ECount,17} {this.PrCount,17}");
