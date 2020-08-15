@@ -58,44 +58,49 @@ namespace Workers
             this.workers = new List<Worker>();
 
             dynamic parseJson = JsonConvert.DeserializeObject(json);
+            string[] r = new string[6];
+           // r = parseJson[0][1].staff;
+            for (int i = 0; i < parseJson[0].Count; i++)
 
-            for (int i = 0; i < 10; i++)
             {
-                string deptName = parseJson[i].name; ;
-                DateTime crDate = Convert.ToDateTime(parseJson[i].date);
-                int eCount = Convert.ToInt32(parseJson[i].ecount);
-                int prCount = Convert.ToInt32(parseJson[i].prcount);
-                List<string> staff = new List<string>();                                       //parseJson[0].staff[]; // пока не знаю как это переделать
+                string deptName = parseJson[0][i].name; ;
+                DateTime crDate = Convert.ToDateTime(parseJson[0][i].date);
+                int eCount = Convert.ToInt32(parseJson[0][i].ecount);
+                int prCount = Convert.ToInt32(parseJson[0][i].prcount);
+                List<string> staff = new List<string>();
+                staff= parseJson[0][i].staff.ToObject<List<string>>();
                 Department tempDept = new Department(deptName, crDate, eCount, prCount, staff);
                 this.departments.Add(tempDept);
-                this.deptByName.Add(tempDept.Name, tempDept);/// this.departments[ this.departments.Count-1]
+                this.deptByName.Add(tempDept.Name, tempDept);
+
             }
 
 
-            for (int i = 10; i < 110; i++)
+            for (int i = 0; i < parseJson[1].Count; i++)
+
             {
-                int num = Convert.ToInt32(parseJson[i].tabnum);
-                string firstName = parseJson[i].firstname;
-                string lastName = parseJson[i].Lastname;
-                int age = Convert.ToInt32(parseJson[i].age);
-                string position = parseJson[i].position;
-                string department = parseJson[i].department;
-                int salary = Convert.ToInt32(parseJson[i].salary);
-                int charge = Convert.ToInt32(parseJson[i].charge);
+                int num = Convert.ToInt32(parseJson[1][i].tabnum);
+                string firstName = parseJson[1][i].firstname;
+                string lastName = parseJson[1][i].Lastname;
+                int age = Convert.ToInt32(parseJson[1][i].age);
+                string position = parseJson[1][i].position;
+                string department = parseJson[1][i].department;
+                int salary = Convert.ToInt32(parseJson[1][i].salary);
+                int charge = Convert.ToInt32(parseJson[1][i].charge);
 
                 Worker tempWorker = new Worker(num, firstName, lastName, age, position, salary, this.deptByName[department], charge);
                 this.workers.Add(tempWorker);
                 this.tabNums.Add(tempWorker.Tabnum);
-            }
 
+            }
         }
 
-        /// <summary>
-        /// Конструктор компании из xml файла
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="dummy">фейковый параметр - любая строка (чтобы отличить от другого конструктора из json)</param>
-        public Company(string path, string dummy) // потом сделаем общий конструктор, который будет выбирать по расширению файла, какой десериализатор запускать
+            /// <summary>
+            /// Конструктор компании из xml файла
+            /// </summary>
+            /// <param name="path"></param>
+            /// <param name="dummy">фейковый параметр - любая строка (чтобы отличить от другого конструктора из json)</param>
+            public Company(string path, string dummy) // потом сделаем общий конструктор, который будет выбирать по расширению файла, какой десериализатор запускать
         {
 
 
@@ -178,9 +183,12 @@ namespace Workers
             //JObject Jdeptbyname = new JObject();
             JObject Jcompany = new JObject();
             //JObject JTabnum = new JObject();
-            //Jcompany["name"] = "ACME Corporation";
+            //Jcompany["corpname"] = "ACME Corporation";
             //jArray.Add(Jcompany);
 
+            JArray jDepartments = new JArray();
+
+            JArray jWorkers = new JArray();
 
             for (int i = 0; i < this.departments.Count; i++)
             {
@@ -191,7 +199,7 @@ namespace Workers
                 Jdepartment["prcount"] = this.departments[i].PrCount;
                 //Jdeptbyname["key"] = this.departments[i].Name;
 
-
+               
                 JArray jstaff = new JArray();
 
                 for (int s = 0; s < this.departments[i].Positions.Count; s++)
@@ -200,8 +208,12 @@ namespace Workers
                     jstaff.Add(Jdepartment["staff"]);
                 }
                 Jdepartment["staff"] = jstaff;
-                jArray.Add(Jdepartment);
+                
+                jDepartments.Add(Jdepartment);
+               
             }
+            jArray.Add(jDepartments);
+
             for (int j = 0; j < this.workers.Count; j++)
             {
                 JObject JWorker = new JObject();
@@ -214,11 +226,10 @@ namespace Workers
                 JWorker["department"] = this.workers[j].Department;
                 JWorker["charge"] = this.workers[j].Charge;
                 //if (this.workers[j].Department == this.departments[i].Name)
-                jArray.Add(JWorker);
-
+                jWorkers.Add(JWorker);
             }
 
-
+            jArray.Add(jWorkers);
 
             //jArray.Add(JTabnum);
             //jArray.Add(Jdeptbyname);

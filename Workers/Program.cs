@@ -237,30 +237,38 @@ namespace Workers
 
 
             Console.ReadKey();
-            //company.SerializeCompanyJSON();
 
-            
-
-           // string jdepartment1 = File.ReadAllText("comp1.json");
-
-           // Company company1 = new Company(10, 100);
-
-           //company1 = JsonConvert.DeserializeObject< Company company1>;
-           // foreach (var item in workers2)
-           // {
-           //     Console.WriteLine(item.PrintWorker());
-           // }
-           // Console.ReadKey();
+            ///////////////////////////////////
+            company.SerializeCompanyJSON();
 
 
 
-            Company company1 = new Company("_company.xml", "xml");
-            int victim = GetNum("Кого выгнать? Введите табельный номер.", 1, 99);
-            company1.Fire(victim);
+            Company company2 = new Company("comp1.json");
 
-            company1.PrintPanel();
+            Console.WriteLine("После десериализации");
             Console.WriteLine();
-            company1.PrintDepartments();
+
+            company2.PrintPanel();
+            Console.WriteLine();
+
+            company2.PrintDepartments();
+
+            //company2 = JsonConvert.DeserializeObject <List<Company>>(json);
+            //foreach (var item in workers2)
+            //{
+            //    Console.WriteLine(item.PrintWorker());
+            //}
+            Console.ReadKey();
+
+//////////////////////////////////////////////////////////////////////
+
+            //Company company1 = new Company("_company.xml", "xml");
+            //int victim = GetNum("Кого выгнать? Введите табельный номер.", 1, 99);
+            //company1.Fire(victim);
+
+            //company1.PrintPanel();
+            //Console.WriteLine();
+            //company1.PrintDepartments();
            
 
             /////////////////////////
