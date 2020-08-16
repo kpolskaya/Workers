@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Xml;
 using System.Runtime.Serialization.Json;
 using Newtonsoft.Json.Converters;
+using System.IO.Pipes;
 
 namespace Workers
 {
@@ -110,18 +111,35 @@ namespace Workers
                     Console.Write("Вы ввели недопустимое значение. Попробуйте еще: ");
 
             } while (true);
+            Console.WriteLine();
             return num;
         }
 
         /// <summary>
-        /// Выводит сообщение на консоль и ждет ввода. Если нажата клавиша "q" - возвращает false,
-        /// в другом случае - true.
+        /// Выводит сообщение на консоль и ждет ввода. 
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Если нажата клавиша "q" - возвращает false,
+        /// в другом случае - true</returns>
         static bool Repeat()
         {
-            Console.Write($"Для выхода нажмите q, для продолжения редактирования - любую другую клавишу: /n");
-            return !(Console.ReadKey(true).Key == ConsoleKey.Q);
+            Console.Write($"Для выхода нажмите q, для продолжения редактирования - любую другую клавишу:");
+            bool ret = !(Console.ReadKey(true).Key == ConsoleKey.Q);
+            Console.WriteLine();
+            return ret;
+        }
+        /// <summary>
+        /// Ждет нажатия на клавишу "Y" или "N"
+        /// </summary>
+        /// <returns>true если нажата "Y" и false если нажата "N"</returns>
+        static bool YesNo()
+        {
+            ConsoleKey ans;
+            Console.Write($"Подтвердите действие (y/n):");
+            do
+                ans = Console.ReadKey(true).Key;
+            while (ans != ConsoleKey.Y && ans != ConsoleKey.N);
+            Console.WriteLine();
+            return ans == ConsoleKey.Y;
         }
 
         /// <summary>
@@ -135,7 +153,9 @@ namespace Workers
         {
             string text;
             Console.Write($"{message}: ");
-            text = Console.ReadLine();
+            do
+                text = Console.ReadLine();
+            while (text == String.Empty);
             return text;
         }
 
@@ -145,260 +165,107 @@ namespace Workers
         {
 
             Company company = new Company(3, 30);
-            
+
             //сначала нужно создать и записать базу ---------------------------->
             //Company company = new Company(@"_company.xml", "");
             //-------------------------------------------------------------------
 
 
-            //Random rand = new Random();
+            do
+            {
+                Console.WriteLine("\nОперации с информационной системой:\n");
+               
+                Console.WriteLine("Для редактирования данных сотрудника выберите 1");
+                Console.WriteLine("Для увольнения сотрудника выберите 2");
+                Console.WriteLine("Для найма сотрудника с улицы выберите 3");
+                Console.WriteLine("Для записи данных в файл .xml выберите 4");
+                Console.WriteLine("Для записи данных в файл .json выберите 5");
+                Console.WriteLine("Для чтения данных из файла .xml выберите 6");
+                Console.WriteLine("Для чтения данных из файла .json выберите 7");
+                // сортировка?
+                Console.WriteLine("Для печати списка сотрудников выберите 9");
+                Console.WriteLine("Для печати списка отделов выберите 10\n");
 
-            //List<Department> organization = new List<Department>();
+                int x;
+                int ans = GetNum("Выберите нужное действие", 1, 10);
+                Console.WriteLine();
 
-            //for (int i = 0; i < 6; i++)
-            //{
-            //    organization.Add(new Department(i));
+                switch (ans)
+                {
+                    case 1:
+                        x = GetNum("Введите табельный номер для редактирования данных сотрудника", 1, company.tabNums.Max);
+                        company.PrintPerson(x);
+                        if (YesNo())
+                        {
+                            string firstName = GetText("Введите новое имя");
+                            string lastName = GetText("Введите новую фамилию");
+                            int salary = GetNum("Введите новую зарплату", 1_000, 100_000);
+                            int charge = GetNum("Введите новую загрузку", 1, 5);
+                            company.EditWorker(x, firstName, lastName, salary, charge);
+                            company.PrintPerson(x);
+                        }
+                        else
+                            Console.WriteLine("Действие отменено!");
 
-            //}
+                        break;
 
-            //List<Worker> workers = new List<Worker>();
+                    case 2:
+                        x = GetNum("Введите табельный номер увольняемого сотрудника", 1, company.tabNums.Max);
+                        company.PrintPerson(x);
+                        if (YesNo())
+                        {
+                            company.Fire(x);
+                            Console.WriteLine("Этот сотрудник у нас никогда не работал.");
+                        }
+                           
 
-            //for (int i = 1; i <= 50; i++)
-            //{
-            //   workers.Add(new Worker(i, organization[rand.Next(0, 6)]));
-            //}
+                        else
+                            Console.WriteLine("Действие отменено!");
+                        break;
 
+                    case 3:
+                        company.HireRandom();
+                        Console.WriteLine("Нанят новый сотрудник:");
+                        company.PrintPerson(company.tabNums.Max);
+                        break;
 
-            company.PrintPanel();
-            Console.WriteLine("\nСортировка:");
-            company.SortByAge();
-            company.SortByDeptAgeSalary();
-            company.PrintPanel();
+                    case 4:
+                        company.SerializeCompanyXML();
+                        Console.WriteLine("Данные сохранены в файле _company.xml");
+                        break;
 
+                    case 5:
+                        company.SerializeCompanyJSON();
+                        Console.WriteLine("Данные сохранены в файле _company.json");
+                        break;
 
+                    case 6:
+                        company = new Company(@"_company.xml");
+                        company.PrintPanel();
+                        break;
 
-            //company.PrintDepartments();
-            //Console.ReadKey();
-            //company.SortParams();
-            //Console.ReadKey();
+                    case 7:
+                        company = new Company(@"_company.json");
+                        company.PrintPanel();
+                        break;
 
-            //company.SerializeWorkerList("_listWorker.xml");
-            //company.SerializeCompany();
+                    case 9:
+                        company.PrintPanel();
+                        break;
 
+                    case 10:
+                        company.PrintDepartments();
+                        break;
 
-            /////////////////////////
+                    default:
+                        Console.WriteLine("Выбрано неизвестное действие\n");
+                        break;
+                }
 
-            //SerializeWorkerList(workers, "_listWorker.xml");
+            }
+            while (Repeat());
 
-            //List<Worker> workers1 = new List<Worker>();
-
-            //workers1 = DeserializeWorkerList("_listWorker.xml");
-
-            //foreach (var item in workers1)
-            //{
-            //    Console.WriteLine(item.PrintWorker());
-            //}
-            //Console.ReadKey();
-
-            ////////////////////////
-            //string json = JsonConvert.SerializeObject(company);
-            //File.WriteAllText("comp1.json", json);
-            //JsonSerializer serializer = new JsonSerializer();
-            //serializer.Converters.Add(new JavaScriptDateTimeConverter());
-            //serializer.NullValueHandling = NullValueHandling.Ignore;
-
-            //using (StreamWriter sw = new StreamWriter("json.txt"))
-            //using (JsonWriter writer = new JsonTextWriter(sw))
-            //{
-            //    serializer.Serialize(writer, company);
-
-            //}
-            //company.SerializeCompanyXML();
-            
-
-
-            //Console.ReadKey();
-
-            /////////////////////////////////////
-            //company.SerializeCompanyJSON();
-
-
-
-            //Company company2 = new Company("_company.json");
-
-            //Console.WriteLine("После десериализации");
-            //Console.WriteLine();
-
-            //company2.PrintPanel();
-            //Console.WriteLine();
-
-            //company2.PrintDepartments();
-
-            //company2 = JsonConvert.DeserializeObject <List<Company>>(json);
-            //foreach (var item in workers2)
-            //{
-            //    Console.WriteLine(item.PrintWorker());
-            //}
-            //Console.ReadKey();
-
-//////////////////////////////////////////////////////////////////////
-
-            //Company company1 = new Company("_company.xml", "xml");
-            //int victim = GetNum("Кого выгнать? Введите табельный номер.", 1, 99);
-            //company1.Fire(victim);
-
-            //company1.PrintPanel();
-            //Console.WriteLine();
-            //company1.PrintDepartments();
            
-
-            /////////////////////////
-
-            //Console.WriteLine($"{"Отдел",15}{"Дата создания",25} {"Сотрудников",15} {"Тем",10}");
-
-            //foreach (var item in Company.departments)
-            //{
-            //    Console.WriteLine(item.PrintDepartment());
-            //}
-            //Console.ReadKey();
-
-
-            //Сортировка последовательно по отдел-возраст-загрузка
-
-            //var sortedWorkers = from worker in workers
-            //                    orderby worker.Department, worker.Age, worker.Charge
-            //                    select worker;
-
-            //List<Worker> sortedWorkers = workers.OrderBy(x => x.Department)
-            //                        .ThenBy(x => x.Age)
-            //                        .ThenBy(x=> x.Charge)
-            //                        .ToList();
-
-
-
-
-            //Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-
-            //foreach (Worker w in sortedWorkers)
-            //{
-            //    Console.WriteLine(w.PrintWorker());
-            //}
-            //Console.ReadKey();
-
-
-
-            //Console.WriteLine("Создание нового сотрудника\n");
-            //int indx = workers.Count + 1;
-            //workers.Add(new Worker(indx, organization[rand.Next(0, 6)]));
-            //Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-
-            //  Console.WriteLine(workers[indx].PrintWorker());
-
-            //foreach (var item in workers)
-            //{
-            //    Console.WriteLine(item.PrintWorker());
-            //}
-            //Console.ReadKey();
-
-
-            //int d = GetNum("Для удаления сотрудника введите его табельный номер", 1, workers.Count);
-
-            //Worker found = workers.Find(item => item.Tabnum == d);
-
-            //Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-            //Console.WriteLine(found.PrintWorker());
-            //Console.WriteLine();
-            //int idx = workers.IndexOf(found);
-            //workers.RemoveAt(idx);
-
-            //foreach (var item in workers)
-            //{
-            //    Console.WriteLine(item.PrintWorker());
-            //}
-            //Console.ReadKey();
-
-
-            //do
-            //{
-            //    Console.WriteLine("РЕДАКТИРОВАНИЕ ДАННЫХ СОТРУДНИКА\n");
-            //    Console.WriteLine("для изменения должности и отдела вам необходимо уволить сотрудника и принять его на работу заново \n");
-            //    int r = GetNum("Введите табельный номер для редактирования данных сотрудника", 1, workers.Count);
-            //    Worker foundr = workers.Find(item => item.Tabnum == r);
-
-            //    Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-            //    Console.WriteLine(foundr.PrintWorker());
-
-            //    Console.WriteLine("\nДля изменения имени нажмите 1");
-            //    Console.WriteLine("Для изменения фамилии нажмите 2");
-            //    Console.WriteLine("Для изменения возраста нажмите 3");
-            //    Console.WriteLine("Для изменения зарплаты нажмите 4");
-            //    Console.WriteLine($"Для изменения количества проектов нажмите 5\n");
-
-            //    //var ans = Console.ReadKey(true).KeyChar;
-
-            //    int ans = GetNum("Выберите нужное действие", 1, 6);
-            //    Console.WriteLine();
-
-            //    switch (ans)
-            //    {
-            //        case 1:
-
-            //            foundr.FirstName = GetText("Введите новое имя");
-            //            foundr.LastName = GetText("Введите новую фамилию");
-            //            foundr.Age = GetNum("Введите новый возраст", 1, 120);
-            //            foundr.Salary = (int)GetNum("Введите новую зарплату", 1, 100000);
-            //            foundr.Charge = GetNum("Введите новую загрузку", 0, 100);
-            //            Console.WriteLine();
-            //            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-            //            Console.WriteLine(foundr.PrintWorker());
-            //            break;
-
-            //        case 2:
-
-            //            foundr.LastName = GetText("Введите новую фамилию");
-            //            Console.WriteLine();
-            //            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-            //            Console.WriteLine(foundr.PrintWorker());
-            //            break;
-
-            //        case 3:
-
-            //            foundr.Age = GetNum("Введите новый возраст",1,120);
-            //            Console.WriteLine();
-            //            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-            //            Console.WriteLine(foundr.PrintWorker());
-            //            break;
-
-            //        case 4:
-
-            //            foundr.Salary = (int)GetNum("Введите новую зарплату", 1, 100000);
-            //            Console.WriteLine();
-            //            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-            //            Console.WriteLine(foundr.PrintWorker());
-            //            break;
-
-            //        case 5:
-
-
-            //            Console.WriteLine();
-            //            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-            //            Console.WriteLine(foundr.PrintWorker());
-            //            break;
-
-            //            default:                                                                                          
-            //                Console.WriteLine("Выбрано неизвестное действие\n");
-            //                break;
-            //    }
-
-            //}
-            //while (Repeat());
-
-            //Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",15} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
-
-            //foreach (var item in workers)
-            //{
-            //    Console.WriteLine(item.PrintWorker());
-            //}
             Console.ReadKey();
 
           

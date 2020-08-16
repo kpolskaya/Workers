@@ -549,10 +549,57 @@ namespace Workers
         /// <returns></returns>
         public void PrintWorker()
         {
-            Console.WriteLine($"{this.tabnum,10}{this.firstName,12} {this.lastName,15} {this.age,10}  {this.position,15}  {this.salary,10} {this.department,10} {this.charge,10}");
+            Console.WriteLine($"{this.tabnum,10}{this.firstName,12} {this.lastName,15} {this.age,10}  {this.position,18}  {this.salary,10} {this.department,10} {this.charge,10}");
         }
 
+        /// <summary>
+        /// Сравнивает работников по возрасту
+        /// </summary>
+        /// <param name="x">первый работник</param>
+        /// <param name="y">второй работник</param>
+        /// <returns>-1 если первый младше, 1 если первый старше, 0 если одного возраста</returns>
+        public static int CompareByAge(Worker x, Worker y)
+        {
+            if (x.Age < y.Age) return -1;
+            if (x.Age > y.Age) return 1;
+            return 0;
+        }
+        /// <summary>
+        /// Сравнивает работников по возрасту и зарплате 
+        /// </summary>
+        /// <param name="x">превый работник</param>
+        /// <param name="y">второй работник</param>
+        /// <returns>-1 если первый младше или того же возраста но меньше получает,
+        /// 1 если первый старше или того же возраста но больше получает,
+        /// 0 если все эти параметры совпадают</returns>
+        public static int CompareByAgeSalary(Worker x, Worker y)
+        {
+            int ret = CompareByAge(x, y);
+            if (ret != 0) return ret;
+            if (x.Salary < y.Salary) return -1;
+            if (x.Salary > y.Salary) return 1;
+            return 0;
 
+        }
+
+        /// <summary>
+        /// Сравнивает работников по возрасту и зарплате в пределах департамента
+        /// </summary>
+        /// <param name="x">превый работник</param>
+        /// <param name="y">второй работник</param>
+        /// <returns>Если работники в одном департаменте: 
+        /// -1 если первый младше или того же возраста но меньше получает,
+        /// 1 если первый старше или того же возраста но больше получает,
+        /// 0 если все эти параметры совпадают.
+        /// Если работники из разных департаментов: -1 если у первого работника номер
+        /// департамента меньше, 1 если у первого номер департамента больше (названия департаментов
+        /// сравниваются как стандартные строки).</returns>
+        public static int CompareByDeptAgeSalary(Worker x, Worker y)
+        {
+            int ret = String.Compare(x.Department, y.Department);
+            if (ret != 0) return ret;
+            return CompareByAgeSalary(x, y);
+        }
 
         #endregion
 
