@@ -30,6 +30,8 @@ namespace Workers
             this.deptByName = new Dictionary<string, Department>();
             this.tabNums = new SortedSet<int>();
             this.tabNums.Add(0);
+            this.wHeader = $"{"Таб. номер",10}{"Имя",12}{"Фамилия",15}{"Возраст",10}{"Должность",18}{"Зарплата",10}{"Отдел",10}{"Проектов",10}";
+            this.dHeader = $"{"Наименование",15}{"Дата создания",15}{"Численность",18}{"Кол-во проектов",18}{"Должности",18}";
 
             for (int i = 0; i < NumOfDepts; i++)
             {
@@ -61,7 +63,9 @@ namespace Workers
             this.tabNums = new SortedSet<int>() {0};
             this.departments = new List<Department>();
             this.workers = new List<Worker>();
-            
+            this.wHeader = $"{"Таб. номер",10}{"Имя",12}{"Фамилия",15}{"Возраст",10}{"Должность",18}{"Зарплата",10}{"Отдел",10}{"Проектов",10}";
+            this.dHeader = $"{"Наименование",15}{"Дата создания",15}{"Численность",18}{"Кол-во проектов",18}{"Должности",18}";
+
             string extn = Path.GetExtension(path);
 
             if (extn == ".json")
@@ -166,78 +170,7 @@ namespace Workers
            
         }
 
-        /// <summary>
-        /// Конструктор компании из xml файла
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="dummy">фейковый параметр - любая строка (чтобы отличить от другого конструктора из json)</param>
-        public Company(string path, string dummy) // удалить!
-        {
-
-
-            this.departments = new List<Department>();
-            this.workers = new List<Worker>();
-            this.deptByName = new Dictionary<string, Department>();
-            this.tabNums = new SortedSet<int>();
-
-            //читаем весь файл
-            string xml = File.ReadAllText(path);
-
-            //разбираем его в коллекцию департаментов
-            var colOfDepts = XDocument.Parse(xml)
-                                        .Descendants("COMPANY")
-                                        .Descendants("DEPARTMENT")
-                                        .ToList();
-
-            //переписываем атрибуты и элементы каждого департамента в соответствующие поля
-            foreach (var item in colOfDepts)
-            {
-                string deptName = item.Attribute("name").Value;
-                DateTime crDate = Convert.ToDateTime(item.Attribute("date").Value);
-                int eCount = Convert.ToInt32(item.Attribute("ecount").Value);
-                int prCount = Convert.ToInt32(item.Attribute("prcount").Value);
-
-                List<string> staff = new List<string>();
-                foreach (string s in item.Elements("Staff"))
-                {
-                    staff.Add(s);
-                }
-
-                //создаем запись в списке департаментов
-                Department tempDept = new Department(deptName, crDate, eCount, prCount, staff);
-                this.departments.Add(tempDept);
-                //и запись в словаре
-                this.deptByName.Add(tempDept.Name, tempDept); //вопрос - проверить увольнение после этого!
-
-                int num;
-                string firstName;
-                string lastName;
-                int age;
-                string position;
-                int salary;
-                int charge;
-
-                //переписываем атрибуты каждого worker в соответствующе поля
-                foreach (var w in item.Elements("WORKER"))
-                {
-                    num = Convert.ToInt32(w.Attribute("num").Value);
-                    firstName = w.Attribute("firstname").Value;
-                    lastName = w.Attribute("lastname").Value;
-                    age = Convert.ToInt32(w.Attribute("age").Value);
-                    position = w.Attribute("position").Value;
-                    salary = Convert.ToInt32(w.Attribute("salary").Value);
-                    charge = Convert.ToInt32(w.Attribute("charge").Value);
-
-                    Worker tempWorker = new Worker(num, firstName, lastName, age, position, salary, tempDept, charge);
-                    this.workers.Add(tempWorker);
-                    this.tabNums.Add(tempWorker.Tabnum);
-
-                }
-
-            }
-
-        }
-
+      
         #endregion
 
         #region Сериализация
@@ -410,7 +343,7 @@ namespace Workers
         /// <param name="num">Индекс записи в списке</param>
         public void PrintPerson(int num)
         {
-            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",18} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+            Console.WriteLine(this.wHeader);
 
             var person = workers.Find(item => item.Tabnum == num);
             if (person == null)
@@ -427,7 +360,7 @@ namespace Workers
         /// <param name="i">Индекс записи в списке</param>
         public void PrintDeptInfo(int i)
         {
-            Console.WriteLine($"{"Наименование",15}{"Дата создания",15}{"Численность",18}{"Кол-во проектов",18}{"Должности",18}");
+            Console.WriteLine(this.dHeader);
             this.departments[i].PrintDepartment();
         }
 
@@ -436,7 +369,7 @@ namespace Workers
         /// </summary>
         public void PrintPanel()
         {
-            Console.WriteLine($"{"Таб. номер",10}{"Имя",12} {"Фамилия",15} {"Возраст",10} {"Должность",18} {"Зарплата",10} {"Отдел",10} {"Проектов",10}");
+            Console.WriteLine(this.wHeader);
 
             for (int i = 0; i < this.workers.Count; i++)
             {
@@ -450,7 +383,7 @@ namespace Workers
         /// </summary>
         public void PrintDepartments()
         {
-            Console.WriteLine($"{"Наименование",15}{"Дата создания",15}{"Численность",18}{"Кол-во проектов",18}{"Должности",18}");
+            Console.WriteLine(this.dHeader);
             for (int i = 0; i < this.departments.Count; i++)
             {
                 this.departments[i].PrintDepartment();
@@ -498,28 +431,44 @@ namespace Workers
         /// <summary>
         /// Список отделов
         /// </summary>
-        public List<Department> departments;
+        List<Department> departments;
 
         /// <summary>
         /// Список работников
         /// </summary>
-        public List<Worker> workers;
+        List<Worker> workers;
 
         /// <summary>
         /// Словарь названий отделов
         /// </summary>
-        public Dictionary<string, Department> deptByName;
+        Dictionary<string, Department> deptByName;
 
         /// <summary>
-        /// Список занятых табельных номеров
+        /// Список всех использованных табельных номеров по порядку
         /// </summary>
-        public SortedSet<int> tabNums; 
+        SortedSet<int> tabNums;
+
+        /// <summary>
+        /// Строка заголовков сотрудников
+        /// </summary>
+        string wHeader;
+
+        /// <summary>
+        /// Строка заголовков департаментов
+        /// </summary>
+        string dHeader;
+
+
 
         #endregion
 
+        #region Свойства
+        /// <summary>
+        /// Список всех использованных табельных номеров по порядку
+        /// </summary>
+        public SortedSet<int> TabNums { get { return tabNums; } }
 
-
-
+        #endregion
 
     }
 }

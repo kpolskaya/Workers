@@ -529,12 +529,12 @@ namespace Workers
             this.department = Department.Name;
            
             this.charge = rand.Next(1, 4);
-            this.age = rand.Next(21, 66);
+            this.age = rand.Next(20, 67);
             
             int hat = HatFitsSenka(this.Age, Department.Positions.Count);
             
             this.position = Department.Positions[hat];
-            this.salary = (100000 / (hat + 1));
+            this.salary = (100 / (hat + 1)) * 1000 + (6 / rand.Next(1, 5) * 100);
             Department.ECount++;
             Department.PrCount += this.charge;
         }
@@ -549,7 +549,18 @@ namespace Workers
         /// <returns></returns>
         public void PrintWorker()
         {
-            Console.WriteLine($"{this.tabnum,10}{this.firstName,12} {this.lastName,15} {this.age,10}  {this.position,18}  {this.salary,10} {this.department,10} {this.charge,10}");
+            Console.WriteLine($"{this.tabnum,10}{this.firstName,12}{this.lastName,15}{this.age,10}{this.position,18}{this.salary,10 : ### ##0}{this.department,10}{this.charge,10}");
+        }
+
+        /// <summary>
+        /// Сравнивает работников по табельному номеру
+        /// </summary>
+        /// <param name="x">первый работник</param>
+        /// <param name="y">второй работник</param>
+        /// <returns>-1 если у первого номер меньше, 1 если у первого номер больше, 0 если одиноковые</returns>
+        public static int CompareByNum(Worker x, Worker y)
+        {
+            return x.Tabnum.CompareTo(y.Tabnum);
         }
 
         /// <summary>

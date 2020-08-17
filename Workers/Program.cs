@@ -182,18 +182,17 @@ namespace Workers
                 Console.WriteLine("Для записи данных в файл .json выберите 5");
                 Console.WriteLine("Для чтения данных из файла .xml выберите 6");
                 Console.WriteLine("Для чтения данных из файла .json выберите 7");
-                // сортировка?
+                Console.WriteLine("Для сортировки списка сотрудников выберите 8");
                 Console.WriteLine("Для печати списка сотрудников выберите 9");
                 Console.WriteLine("Для печати списка отделов выберите 10\n");
 
                 int x;
                 int ans = GetNum("Выберите нужное действие", 1, 10);
-                Console.WriteLine();
-
+               
                 switch (ans)
                 {
                     case 1:
-                        x = GetNum("Введите табельный номер для редактирования данных сотрудника", 1, company.tabNums.Max);
+                        x = GetNum("Введите табельный номер для редактирования данных сотрудника", 1, company.TabNums.Max);
                         company.PrintPerson(x);
                         if (YesNo())
                         {
@@ -210,7 +209,7 @@ namespace Workers
                         break;
 
                     case 2:
-                        x = GetNum("Введите табельный номер увольняемого сотрудника", 1, company.tabNums.Max);
+                        x = GetNum("Введите табельный номер увольняемого сотрудника", 1, company.TabNums.Max);
                         company.PrintPerson(x);
                         if (YesNo())
                         {
@@ -226,7 +225,7 @@ namespace Workers
                     case 3:
                         company.HireRandom();
                         Console.WriteLine("Нанят новый сотрудник:");
-                        company.PrintPerson(company.tabNums.Max);
+                        company.PrintPerson(company.TabNums.Max);
                         break;
 
                     case 4:
@@ -247,6 +246,40 @@ namespace Workers
                     case 7:
                         company = new Company(@"_company.json");
                         company.PrintPanel();
+                        break;
+
+                    case 8:
+                        Console.WriteLine("\nСортировка:\n");
+
+                        Console.WriteLine("Для сортировки сотрудников по возрасту выберите 1");
+                        Console.WriteLine("Для сортировки сотрудников по возрасту и заработной плате выберите 2");
+                        Console.WriteLine("Для сортировки сотрудников по возрасту и заработной плате внутри отдела выберите 3");
+                        Console.WriteLine("Для сортировке по табельным номерам выберите 4");
+
+                        ans = GetNum("Выберите нужное действие", 1, 4);
+                        
+                        switch (ans)
+                        {
+                           case 1:
+                                company.Sort(Worker.CompareByAge);
+                                company.PrintPanel();
+                                break;
+
+                            case 2:
+                                company.Sort(Worker.CompareByAgeSalary);
+                                company.PrintPanel();
+                                break;
+
+                            case 3:
+                                company.Sort(Worker.CompareByDeptAgeSalary);
+                                company.PrintPanel();
+                                break;
+                            case 4:
+                                company.Sort(Worker.CompareByNum);
+                                company.PrintPanel();
+                                break;
+                        }
+
                         break;
 
                     case 9:

@@ -90,7 +90,7 @@ namespace Workers
         /// </summary>
         public void PrintDepartment()
         {
-            Console.Write($"{this.Name,15}{this.CrDate, 15:dd.MM.yyyy} {this.ECount,17} {this.PrCount,17}");
+            Console.Write($"{this.Name,15}{this.CrDate, 15:dd.MM.yyyy}{this.ECount,18}{this.PrCount,18}");
             foreach (string item in this.Positions)
                 Console.Write($"{item, 18}\n{" ",66}");
             Console.WriteLine();
