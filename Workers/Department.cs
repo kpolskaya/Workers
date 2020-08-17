@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Text;
 
 namespace Workers
@@ -70,7 +71,7 @@ namespace Workers
         /// Конструктор случайного отдела с номером
         /// </summary>
         /// <param name="num">номер отдела</param>
-        public Department(int num)       //q - максимальное количество сотрудников в отделе???
+        public Department(int num)      
         {
             Random rand;
             DateTime d = Convert.ToDateTime("01.01.1990"); // дата создания организации 

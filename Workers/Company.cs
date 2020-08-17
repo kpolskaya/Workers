@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Runtime.CompilerServices;
 
 namespace Workers
 {
@@ -19,11 +20,10 @@ namespace Workers
         #region Конструкторы
 
         /// <summary>
-        /// Создает компанию в демо-режиме с рандомными сотрудниками
+        /// Общий конструктор c частично инициализированными полями
         /// </summary>
-        /// <param name="NumOfDepts">Количество создаваемых отделов</param>
-        /// <param name="NumOfJacks">Количество создаваемых работников внутри каждого отдела</param>
-        public Company(int NumOfDepts, int NumOfJacks)
+        /// <param name="AnyInt">Любое целое число (фальшивый параметр)</param>
+        public Company(int AnyInt)
         {
             this.departments = new List<Department>();
             this.workers = new List<Worker>();
@@ -32,22 +32,31 @@ namespace Workers
             this.tabNums.Add(0);
             this.wHeader = $"{"Таб. номер",10}{"Имя",12}{"Фамилия",15}{"Возраст",10}{"Должность",18}{"Зарплата",10}{"Отдел",10}{"Проектов",10}";
             this.dHeader = $"{"Наименование",15}{"Дата создания",15}{"Численность",18}{"Кол-во проектов",18}{"Должности",18}";
+            this.MaxQ = 1_000_000;
+            this.MaxD = 10;
+        }
 
-            for (int i = 0; i < NumOfDepts; i++)
+        /// <summary>
+        /// Создает компанию в демо-режиме с рандомными сотрудниками
+        /// </summary>
+        /// <param name="NumOfDepts">Количество создаваемых отделов</param>
+        /// <param name="NumOfJacks">Количество создаваемых работников внутри каждого отдела</param>
+        public Company(int NumOfDepts, int NumOfJacks) : this (0)
+        {
+            int max = NumOfDepts < this.MaxD ? NumOfDepts : this.MaxD;
+            for (int i = 0; i < max; i++)
             {
                 this.departments.Add(new Department(i + 1));
                 this.deptByName.Add(this.departments[i].Name, this.departments[i]);
             }
 
-            Random r = new Random();
-
+            max = NumOfJacks < this.MaxQ ? NumOfJacks : this.MaxQ;
             for (int d = 0; d < this.departments.Count; d++)
             {
-                for (int i = 0; i < NumOfJacks; i++)
+                for (int i = 0; i < max; i++)
                 {
                     this.tabNums.Add(this.tabNums.Max + 1);
                     this.workers.Add(new Worker(this.tabNums.Max, this.departments[d]));
-                    
                 }
             }
 
@@ -57,15 +66,8 @@ namespace Workers
         /// Конструктор компании из файла. Нужный парсер выбирается по расширению имени файла.
         /// </summary>
         /// <param name="path">.xml или .json файл</param>
-        public Company(string path)
+        public Company(string path) : this (0)
         {
-            this.deptByName = new Dictionary<string, Department>();
-            this.tabNums = new SortedSet<int>() {0};
-            this.departments = new List<Department>();
-            this.workers = new List<Worker>();
-            this.wHeader = $"{"Таб. номер",10}{"Имя",12}{"Фамилия",15}{"Возраст",10}{"Должность",18}{"Зарплата",10}{"Отдел",10}{"Проектов",10}";
-            this.dHeader = $"{"Наименование",15}{"Дата создания",15}{"Численность",18}{"Кол-во проектов",18}{"Должности",18}";
-
             string extn = Path.GetExtension(path);
 
             if (extn == ".json")
@@ -73,42 +75,40 @@ namespace Workers
                 string json = File.ReadAllText(path);
 
                 dynamic parseJson = JsonConvert.DeserializeObject(json);
-                string[] r = new string[6];
                 
-                for (int i = 0; i < parseJson[0].Count; i++)
+                for (int i = 0; i < parseJson[1].Count; i++)
 
                 {
-                    string deptName = parseJson[0][i].name; ;
-                    DateTime crDate = Convert.ToDateTime(parseJson[0][i].date);
-                    int eCount = Convert.ToInt32(parseJson[0][i].ecount);
-                    int prCount = Convert.ToInt32(parseJson[0][i].prcount);
+                    string deptName = parseJson[1][i].name; ;
+                    DateTime crDate = Convert.ToDateTime(parseJson[1][i].date);
+                    int eCount = Convert.ToInt32(parseJson[1][i].ecount);
+                    int prCount = Convert.ToInt32(parseJson[1][i].prcount);
                     List<string> staff = new List<string>();
-                    staff = parseJson[0][i].staff.ToObject<List<string>>();
+                    staff = parseJson[1][i].staff.ToObject<List<string>>();
                     Department tempDept = new Department(deptName, crDate, eCount, prCount, staff);
                     this.departments.Add(tempDept);
                     this.deptByName.Add(tempDept.Name, tempDept);
 
                 }
 
-
-                for (int i = 0; i < parseJson[1].Count; i++)
+                for (int i = 0; i < parseJson[2].Count; i++)
 
                 {
-                    int num = Convert.ToInt32(parseJson[1][i].tabnum);
-                    string firstName = parseJson[1][i].firstname;
-                    string lastName = parseJson[1][i].Lastname;
-                    int age = Convert.ToInt32(parseJson[1][i].age);
-                    string position = parseJson[1][i].position;
-                    string department = parseJson[1][i].department;
-                    int salary = Convert.ToInt32(parseJson[1][i].salary);
-                    int charge = Convert.ToInt32(parseJson[1][i].charge);
+                    int num = Convert.ToInt32(parseJson[2][i].tabnum);
+                    string firstName = parseJson[2][i].firstname;
+                    string lastName = parseJson[2][i].Lastname;
+                    int age = Convert.ToInt32(parseJson[2][i].age);
+                    string position = parseJson[2][i].position;
+                    string department = parseJson[2][i].department;
+                    int salary = Convert.ToInt32(parseJson[2][i].salary);
+                    int charge = Convert.ToInt32(parseJson[2][i].charge);
 
                     Worker tempWorker = new Worker(num, firstName, lastName, age, position, salary, this.deptByName[department], charge);
                     this.workers.Add(tempWorker);
                     this.tabNums.Add(tempWorker.Tabnum);
-
                 }
             }
+
             else if (extn == ".xml")
             {
                 //читаем весь файл
@@ -162,7 +162,6 @@ namespace Workers
                         Worker tempWorker = new Worker(num, firstName, lastName, age, position, salary, tempDept, charge);
                         this.workers.Add(tempWorker);
                         this.tabNums.Add(tempWorker.Tabnum);
-
                     }
 
                 }
@@ -181,14 +180,9 @@ namespace Workers
         public void SerializeCompanyJSON()
         {
             JArray jArray = new JArray();
-            //deptByName = new Dictionary<string, Department>();
-            //tabNums = new SortedSet<int>();
-
-            //JObject Jdeptbyname = new JObject();
             JObject Jcompany = new JObject();
-            //JObject JTabnum = new JObject();
-            //Jcompany["corpname"] = "ACME Corporation";
-            //jArray.Add(Jcompany);
+            Jcompany["company_name"] = "ACME Corporation Russia";
+            jArray.Add(Jcompany);
 
             JArray jDepartments = new JArray();
 
@@ -201,15 +195,12 @@ namespace Workers
                 Jdepartment["date"] = this.departments[i].CrDate;
                 Jdepartment["ecount"] = this.departments[i].ECount;
                 Jdepartment["prcount"] = this.departments[i].PrCount;
-                //Jdeptbyname["key"] = this.departments[i].Name;
-
-
+                
                 JArray jstaff = new JArray();
 
                 for (int s = 0; s < this.departments[i].Positions.Count; s++)
                 {
-                    Jdepartment["staff"] = this.departments[i].Positions[s];
-                    jstaff.Add(Jdepartment["staff"]);
+                   jstaff.Add(this.departments[i].Positions[s]);
                 }
                 Jdepartment["staff"] = jstaff;
 
@@ -229,16 +220,12 @@ namespace Workers
                 JWorker["position"] = this.workers[j].Position;
                 JWorker["department"] = this.workers[j].Department;
                 JWorker["charge"] = this.workers[j].Charge;
-                //if (this.workers[j].Department == this.departments[i].Name)
                 jWorkers.Add(JWorker);
             }
 
             jArray.Add(jWorkers);
 
-            //jArray.Add(JTabnum);
-            //jArray.Add(Jdeptbyname);
-            string json = JsonConvert.SerializeObject(jArray);
-            File.WriteAllText("_company.json", (jArray.ToString()));
+            File.WriteAllText("_company.json", jArray.ToString());
         }
 
 
@@ -249,7 +236,7 @@ namespace Workers
         public void SerializeCompanyXML()
         {
             XElement xCompany = new XElement("COMPANY");
-            XAttribute xCompanyName = new XAttribute("name", "ACME Corporation");
+            XAttribute xCompanyName = new XAttribute("company_name", "ACME Corporation Russia");
             xCompany.Add(xCompanyName);
 
 
@@ -312,29 +299,38 @@ namespace Workers
         /// <summary>
         /// Нанимает случайно сгенерированного работника
         /// </summary>
-        public void HireRandom()
+        public bool HireRandom()
         {
+            List<int> haveFreeChair = new List<int>();
+            for (int i =0; i < this.departments.Count; i++)
+            {
+                if (this.departments[i].ECount < this.MaxQ)
+                    haveFreeChair.Add(i);
+            }
+            if (haveFreeChair.Count == 0) return false;
+
             Random r = new Random();
             int nextNum = this.tabNums.Max + 1;
             this.tabNums.Add(nextNum);
-            this.workers.Add(new Worker(nextNum, this.departments[r.Next(0, this.departments.Count)]));
+            this.workers.Add(new Worker(nextNum, this.departments[haveFreeChair[r.Next(0, haveFreeChair.Count)]]));
+            return true;
         }
 
         /// <summary>
         /// Увольняет работника по табельному номеру
         /// </summary>
         /// <param name="num">Табельный номер</param>
-        public void Fire(int num)
+        public bool Fire(int num)
         {
             var person = workers.Find(item => item.Tabnum == num);
             if (person == null)
             {
-                Console.WriteLine("В доступе отказано!");
-                return;
+                return false;
             }
             deptByName[person.Department].ECount--;                         // минус человек
             deptByName[person.Department].PrCount -= person.Charge;         // минус проекты
             this.workers.Remove(person);
+            return true;
         }
 
         /// <summary>
@@ -348,7 +344,7 @@ namespace Workers
             var person = workers.Find(item => item.Tabnum == num);
             if (person == null)
             {
-                Console.WriteLine("В доступе отказано!");
+                Console.WriteLine("Работник с таким табельным номером не найден.");
                 return;
             }
             person.PrintWorker();
@@ -361,6 +357,8 @@ namespace Workers
         public void PrintDeptInfo(int i)
         {
             Console.WriteLine(this.dHeader);
+            if (this.departments[i] == null)
+                Console.WriteLine("Отдела с таким номером не существует");
             this.departments[i].PrintDepartment();
         }
 
@@ -407,22 +405,23 @@ namespace Workers
         /// <param name="newFamName">новая фамилия</param>
         /// <param name="newSalary">новая зарплата</param>
         /// <param name="newCharge">новая загрузка</param>
-        public void EditWorker(int num, string newName, string newFamName, int newSalary, int newCharge)
+        public bool EditWorker(int num, string newName, string newFamName, int newSalary, int newCharge)
         {
             var person = workers.Find(item => item.Tabnum == num);
             if (person == null)
             {
-                Console.WriteLine("В доступе отказано!");
-                return;
+                
+                return false;
             }
             int i = this.workers.IndexOf(person);
             this.workers[i].FirstName = newName;
             this.workers[i].LastName = newFamName;
             this.workers[i].Salary = newSalary;
             this.workers[i].Charge = newCharge;
+            return true;
         }
 
-        #endregion
+       #endregion
 
 
 
@@ -467,6 +466,16 @@ namespace Workers
         /// Список всех использованных табельных номеров по порядку
         /// </summary>
         public SortedSet<int> TabNums { get { return tabNums; } }
+
+        /// <summary>
+        /// Максимальное количество работников в отделе
+        /// </summary>
+        public int MaxQ { get; }
+
+        /// <summary>
+        /// Максимальное количество отделов
+        /// </summary>
+        public int MaxD { get; }
 
         #endregion
 

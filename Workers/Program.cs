@@ -122,7 +122,7 @@ namespace Workers
         /// в другом случае - true</returns>
         static bool Repeat()
         {
-            Console.Write($"Для выхода нажмите q, для продолжения редактирования - любую другую клавишу:");
+            Console.Write($"Для выхода нажмите Q, для продолжения работы - любую другую клавишу:");
             bool ret = !(Console.ReadKey(true).Key == ConsoleKey.Q);
             Console.WriteLine();
             return ret;
@@ -164,13 +164,9 @@ namespace Workers
         static void Main(string[] args)
         {
 
-            Company company = new Company(3, 30);
+            Company company = new Company(3, 15);
 
-            //сначала нужно создать и записать базу ---------------------------->
-            //Company company = new Company(@"_company.xml", "");
-            //-------------------------------------------------------------------
-
-
+            
             do
             {
                 Console.WriteLine("\nОперации с информационной системой:\n");
@@ -198,10 +194,12 @@ namespace Workers
                         {
                             string firstName = GetText("Введите новое имя");
                             string lastName = GetText("Введите новую фамилию");
-                            int salary = GetNum("Введите новую зарплату", 1_000, 100_000);
+                            int salary = GetNum("Введите новую зарплату", 1_000, 999_999);
                             int charge = GetNum("Введите новую загрузку", 1, 5);
-                            company.EditWorker(x, firstName, lastName, salary, charge);
-                            company.PrintPerson(x);
+                            if (company.EditWorker(x, firstName, lastName, salary, charge))
+                                company.PrintPerson(x);
+                            else
+                                Console.WriteLine("Операция не может быть выполнена!");
                         }
                         else
                             Console.WriteLine("Действие отменено!");
@@ -213,8 +211,10 @@ namespace Workers
                         company.PrintPerson(x);
                         if (YesNo())
                         {
-                            company.Fire(x);
-                            Console.WriteLine("Этот сотрудник у нас никогда не работал.");
+                            if (company.Fire(x))
+                                Console.WriteLine("Теперь этот сотрудник у нас никогда не работал.");
+                            else
+                                Console.WriteLine("Операция не может быть выполнена!");
                         }
                            
 
@@ -223,9 +223,12 @@ namespace Workers
                         break;
 
                     case 3:
-                        company.HireRandom();
-                        Console.WriteLine("Нанят новый сотрудник:");
-                        company.PrintPerson(company.TabNums.Max);
+                        if (company.HireRandom())
+                        {
+                            Console.WriteLine("Нанят новый сотрудник:");
+                            company.PrintPerson(company.TabNums.Max);
+                        }
+                        else Console.WriteLine("Невозможно никого нанять - все отделы укомплектованы.");
                         break;
 
                     case 4:
@@ -273,6 +276,7 @@ namespace Workers
                             case 3:
                                 company.Sort(Worker.CompareByDeptAgeSalary);
                                 company.PrintPanel();
+                                
                                 break;
                             case 4:
                                 company.Sort(Worker.CompareByNum);
