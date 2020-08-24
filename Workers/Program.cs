@@ -164,7 +164,7 @@ namespace Workers
         static void Main(string[] args)
         {
 
-            Company company = new Company(3, 15);
+            Company company = new Company(3, 20);
 
             
             do

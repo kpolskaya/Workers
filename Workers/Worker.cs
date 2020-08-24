@@ -571,9 +571,8 @@ namespace Workers
         /// <returns>-1 если первый младше, 1 если первый старше, 0 если одного возраста</returns>
         public static int CompareByAge(Worker x, Worker y)
         {
-            if (x.Age < y.Age) return -1;
-            if (x.Age > y.Age) return 1;
-            return 0;
+          
+            return x.Age.CompareTo(y.Age);
         }
         /// <summary>
         /// Сравнивает работников по возрасту и зарплате 
@@ -587,10 +586,7 @@ namespace Workers
         {
             int ret = CompareByAge(x, y);
             if (ret != 0) return ret;
-            if (x.Salary < y.Salary) return -1;
-            if (x.Salary > y.Salary) return 1;
-            return 0;
-
+            return x.Salary.CompareTo(y.Salary);
         }
 
         /// <summary>

@@ -72,13 +72,18 @@ namespace Workers
 
             if (extn == ".json")
             {
+                //читаем весь файл
                 string json = File.ReadAllText(path);
-
+                
+                //создаем динамический объект, содержащий все объекты и массивы из файла: индек [0] - название компании
+                // индекс  [1] - департаменты, индекс [2] - работники.
                 dynamic parseJson = JsonConvert.DeserializeObject(json);
                 
+                //формируем список департаментов
                 for (int i = 0; i < parseJson[1].Count; i++)
 
                 {
+                    
                     string deptName = parseJson[1][i].name; ;
                     DateTime crDate = Convert.ToDateTime(parseJson[1][i].date);
                     int eCount = Convert.ToInt32(parseJson[1][i].ecount);
@@ -86,11 +91,13 @@ namespace Workers
                     List<string> staff = new List<string>();
                     staff = parseJson[1][i].staff.ToObject<List<string>>();
                     Department tempDept = new Department(deptName, crDate, eCount, prCount, staff);
+                    
+                    //формируем словарь департаментов
                     this.departments.Add(tempDept);
                     this.deptByName.Add(tempDept.Name, tempDept);
 
                 }
-
+                //формируем список работников
                 for (int i = 0; i < parseJson[2].Count; i++)
 
                 {
@@ -105,6 +112,7 @@ namespace Workers
 
                     Worker tempWorker = new Worker(num, firstName, lastName, age, position, salary, this.deptByName[department], charge);
                     this.workers.Add(tempWorker);
+                    
                     this.tabNums.Add(tempWorker.Tabnum);
                 }
             }
