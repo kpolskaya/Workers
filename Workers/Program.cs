@@ -169,21 +169,31 @@ namespace Workers
             
             do
             {
-                Console.WriteLine("\nОперации с информационной системой:\n");
-               
-                Console.WriteLine("Для редактирования данных сотрудника выберите 1");
-                Console.WriteLine("Для увольнения сотрудника выберите 2");
-                Console.WriteLine("Для найма сотрудника с улицы выберите 3");
-                Console.WriteLine("Для записи данных в файл .xml выберите 4");
-                Console.WriteLine("Для записи данных в файл .json выберите 5");
-                Console.WriteLine("Для чтения данных из файла .xml выберите 6");
-                Console.WriteLine("Для чтения данных из файла .json выберите 7");
-                Console.WriteLine("Для сортировки списка сотрудников выберите 8");
-                Console.WriteLine("Для печати списка сотрудников выберите 9");
-                Console.WriteLine("Для печати списка отделов выберите 10\n");
+                int ans;
+                if(company.TabNums.Max==0)
+                {
+                    Console.WriteLine("В информационной системе нет ни одной записи.\nДля чтения данных из файла .xml выберите 6 \n" +
+                        "Для чтения данных из файла json выберите 7");
+                    ans = GetNum("Выберите нужное действие", 6, 7);
+                }
+                else
+                {
+                    Console.WriteLine("\nОперации с информационной системой:\n");
 
+                    Console.WriteLine("Для редактирования данных сотрудника выберите 1");
+                    Console.WriteLine("Для увольнения сотрудника выберите 2");
+                    Console.WriteLine("Для найма сотрудника с улицы выберите 3");
+                    Console.WriteLine("Для записи данных в файл .xml выберите 4");
+                    Console.WriteLine("Для записи данных в файл .json выберите 5");
+                    Console.WriteLine("Для чтения данных из файла .xml выберите 6");
+                    Console.WriteLine("Для чтения данных из файла .json выберите 7");
+                    Console.WriteLine("Для сортировки списка сотрудников выберите 8");
+                    Console.WriteLine("Для печати списка сотрудников выберите 9");
+                    Console.WriteLine("Для печати списка отделов выберите 10\n");
+                    ans = GetNum("Выберите нужное действие", 1, 10);
+                }
                 int x;
-                int ans = GetNum("Выберите нужное действие", 1, 10);
+                
                
                 switch (ans)
                 {

@@ -68,6 +68,8 @@ namespace Workers
         /// <param name="path">.xml или .json файл</param>
         public Company(string path) : this (0)
         {
+            if (!File.Exists(path))
+                return;
             string extn = Path.GetExtension(path);
 
             if (extn == ".json")
@@ -377,12 +379,14 @@ namespace Workers
         {
             Console.WriteLine(this.wHeader);
 
-            for (int i = 0; i < this.workers.Count; i++)
-            {
-                this.workers[i].PrintWorker();
-            }
-
-        }
+            if (this.workers.Count == 0)
+                Console.WriteLine("В системе нет ни одной записи.");
+            else
+                for (int i = 0; i < this.workers.Count; i++)
+                {
+                    this.workers[i].PrintWorker();
+                }
+         }
 
         /// <summary>
         /// Выводит на консоль список департаментов со всеми полями
@@ -390,10 +394,13 @@ namespace Workers
         public void PrintDepartments()
         {
             Console.WriteLine(this.dHeader);
-            for (int i = 0; i < this.departments.Count; i++)
-            {
+            if (this.departments.Count == 0)
+                Console.WriteLine("В системе нет ни одной записи.");
+            else
+                for (int i = 0; i < this.departments.Count; i++)
+                {
                 this.departments[i].PrintDepartment();
-            }
+                }
 
         }
 
